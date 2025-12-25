@@ -22,6 +22,28 @@ English | [简体中文](./README.md)
 
 PowerTools is a completely free online developer toolkit that provides **50+ practical development tools**, covering encryption/decryption, code formatting, API testing, text processing, image processing, and more. All tools run locally in your browser, require no installation, and protect your data privacy.
 
+### 📸 Screenshots
+
+<div align="center">
+
+**Main Interface**
+
+![Main Interface](./images/main.png)
+
+**JSON Formatter**
+
+![JSON Formatter](./images/json_format.png)
+
+**Hash Generator**
+
+![Hash Generator](./images/hash.png)
+
+**Regex Tester**
+
+![Regex Tester](./images/regex.png)
+
+</div>
+
 ### ✨ Highlights
 
 - 🚀 **Ready to Use** - No installation required, just open your browser
