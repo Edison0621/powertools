@@ -12,7 +12,7 @@ English | [简体中文](./README.md)
 [![Vite](https://img.shields.io/badge/Vite-7.2.5-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](./LICENSE)
 
-[Live Demo](https://powertools.dev/) · [Features](#-features) · [Quick Start](#-quick-start) · [Contributing](#-contributing)
+[Live Demo](https://powertools.dev/) · [Features](#️-features) · [Quick Start](#-quick-start) · [Contributing](#-contributing)
 
 </div>
 
