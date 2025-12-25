@@ -12,7 +12,7 @@
 [![Vite](https://img.shields.io/badge/Vite-7.2.5-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](./LICENSE)
 
-[在线体验](https://powertools.dev/) · [功能列表](#-功能特性) · [快速开始](#-快速开始) · [贡献指南](#-贡献)
+[在线体验](https://powertools.dev/) · [项目简介](#-项目简介) · [快速开始](#-快速开始) · [贡献指南](#-贡献)
 
 </div>
 

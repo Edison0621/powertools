@@ -158,7 +158,7 @@ onMounted(() => {
       <div class="container">
         <p>PowerTools - 开发者的便捷工具集 🚀</p>
         <nav class="footer-links" aria-label="页脚导航">
-          <a href="https://github.com" target="_blank" rel="noopener noreferrer">GitHub</a>
+          <a href="https://github.com/Edison0621/powertools" target="_blank" rel="noopener noreferrer">GitHub</a>
           <span aria-hidden="true">·</span>
           <a href="#" @click.prevent>关于</a>
           <span aria-hidden="true">·</span>

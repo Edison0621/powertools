@@ -18,8 +18,8 @@ const includeNumbers = ref(true)
 const includeSymbols = ref(false)
 
 // 日期选项
-const dateStart = ref('2024-01-01')
-const dateEnd = ref('2024-12-31')
+const dateStart = ref('2025-01-01')
+const dateEnd = ref('2025-12-31')
 const dateFormat = ref('YYYY-MM-DD')
 
 // 生成随机数字

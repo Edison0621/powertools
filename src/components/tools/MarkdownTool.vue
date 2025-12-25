@@ -235,7 +235,7 @@ function hello() {
 
 ---
 
-**版权所有 © 2024**`
+**版权所有 © 2025 PowerTools**`
 }
 </script>
 

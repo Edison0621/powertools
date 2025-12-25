@@ -97,7 +97,7 @@ updateDate()
           @input="updateTimestamp"
           type="text"
           class="input-field"
-          placeholder="2024-01-01 12:00:00"
+          placeholder="2026-01-01 12:00:00"
         />
         <button @click="copy(dateString)" class="copy-btn">📋 复制</button>
       </div>
