@@ -1,12 +1,42 @@
 # PowerTools robots.txt
+# 允许所有搜索引擎抓取
+
+# Google爬虫
+User-agent: Googlebot
+Allow: /
+
+# 百度爬虫
+User-agent: Baiduspider
+Allow: /
+
+# 搜狗爬虫
+User-agent: Sogou web spider
+Allow: /
+User-agent: Sogou News Spider
+Allow: /
+
+# 360爬虫
+User-agent: 360Spider
+Allow: /
+
+# 必应爬虫
+User-agent: Bingbot
+Allow: /
+
+# 神马爬虫
+User-agent: YisouSpider
+Allow: /
+
+# 其他所有爬虫
 User-agent: *
 Allow: /
 
-# Sitemap location
-Sitemap: https://powertools.dev/sitemap.xml
+# Sitemap 位置
+Sitemap: http://tools.aidreamclub.com/sitemap.xml
 
-# Crawl-delay
+# 爬取延迟（秒）
 Crawl-delay: 1
 
-# Disallow admin pages (if any in future)
+# 不允许抓取的目录（如果有）
 # Disallow: /admin/
+# Disallow: /private/

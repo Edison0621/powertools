@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>百度链接主动推送工具 - PowerTools</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+        button {
+            background: #3b82f6;
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #2563eb;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔗 百度链接主动推送工具</h1>
+        
+        <div class="info">
+            <strong>说明：</strong>
+            <ul>
+                <li>每行一个URL，自动推送给百度搜索引擎</li>
+                <li>推荐使用完整URL，如：http://tools.aidreamclub.com/</li>
+                <li>每天最多推送10万条（普通站点）</li>
+            </ul>
+        </div>
+
+        <label for="urls"><strong>输入要推送的URL列表：</strong></label>
+        <textarea id="urls" placeholder="http://tools.aidreamclub.com/
+http://tools.aidreamclub.com/#crypto
+http://tools.aidreamclub.com/#converter"></textarea>
+
+        <button onclick="pushToBaidu()">推送到百度</button>
+
+        <div id="result" class="result"></div>
+    </div>
+
+    <script>
+        function pushToBaidu() {
+            const urls = document.getElementById('urls').value.split('\n').filter(url => url.trim());
+            const resultDiv = document.getElementById('result');
+            
+            if (urls.length === 0) {
+                showResult('请输入至少一个URL', 'error');
+                return;
+            }
+
+            // 百度站长平台推送API
+            // 需要替换YOUR_SITE和YOUR_TOKEN
+            const api = 'http://data.zz.baidu.com/urls?site=tools.aidreamclub.com&token=YOUR_BAIDU_TOKEN';
+            
+            fetch(api, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain'
+                },
+                body: urls.join('\n')
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showResult(`成功推送 ${data.success} 条URL，今日剩余 ${data.remain} 条`, 'success');
+                } else if (data.error) {
+                    showResult(`推送失败：${data.message}`, 'error');
+                } else {
+                    showResult('推送完成，请查看百度站长平台确认', 'success');
+                }
+            })
+            .catch(error => {
+                showResult(`推送出错：${error.message}。请检查网络连接或API配置。`, 'error');
+            });
+        }
+
+        function showResult(message, type) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = 'result ' + type;
+            resultDiv.innerHTML = message;
+            resultDiv.style.display = 'block';
+        }
+
+        // 页面加载时自动填充默认URL
+        window.onload = function() {
+            const defaultUrls = [
+                'http://tools.aidreamclub.com/',
+                'http://tools.aidreamclub.com/#crypto',
+                'http://tools.aidreamclub.com/#converter',
+                'http://tools.aidreamclub.com/#web',
+                'http://tools.aidreamclub.com/#dev',
+                'http://tools.aidreamclub.com/#network',
+                'http://tools.aidreamclub.com/#math',
+                'http://tools.aidreamclub.com/#text',
+                'http://tools.aidreamclub.com/#datetime',
+                'http://tools.aidreamclub.com/#api',
+                'http://tools.aidreamclub.com/#privacy',
+                'http://tools.aidreamclub.com/#image'
+            ];
+            document.getElementById('urls').value = defaultUrls.join('\n');
+        };
+    </script>
+</body>
+</html>

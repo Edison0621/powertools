@@ -12,7 +12,7 @@ English | [简体中文](./README.md)
 [![Vite](https://img.shields.io/badge/Vite-7.2.5-646CFF?style=flat-square&logo=vite)](https://vitejs.dev/)
 [![License](https://img.shields.io/badge/license-MIT-green?style=flat-square)](./LICENSE)
 
-[Live Demo](https://powertools.dev/) · [Features](#️-features) · [Quick Start](#-quick-start) · [Contributing](#-contributing)
+[Live Demo](http://tools.aidreamclub.com/) · [Features](#️-features) · [Quick Start](#-quick-start) · [Contributing](#-contributing)
 
 </div>
 
@@ -163,7 +163,7 @@ PowerTools is a completely free online developer toolkit that provides **50+ pra
 
 ### Online Usage
 
-Visit [https://powertools.dev/](https://powertools.dev/) to use all tools immediately.
+Visit [http://tools.aidreamclub.com/](http://tools.aidreamclub.com/) to use all tools immediately.
 
 ### Local Deployment
 
