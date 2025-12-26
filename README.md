@@ -163,7 +163,7 @@ PowerTools 是一个完全免费的在线开发者工具集，提供 **50+ 实�
 
 ### 在线使用
 
-访问 [https://powertools.dev/](https://powertools.dev/) 即可立即使用所有工具。
+访问 [http://tools.aidreamclub.com/](http://tools.aidreamclub.com/) 即可立即使用所有工具。
 
 ### 本地部署
 
