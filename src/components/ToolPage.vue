@@ -47,7 +47,6 @@ import PasswordStrengthTool from './tools/PasswordStrengthTool.vue'
 import DataMaskingTool from './tools/DataMaskingTool.vue'
 import SecureDeleteTool from './tools/SecureDeleteTool.vue'
 import PrivacyCheckerTool from './tools/PrivacyCheckerTool.vue'
-import PatternViewer from './patterns/PatternViewer.vue'
 
 const props = defineProps({
   tool: Object
@@ -103,20 +102,22 @@ const toolComponents = {
   'password-strength': PasswordStrengthTool,
   'data-masking': DataMaskingTool,
   'secure-delete': SecureDeleteTool,
-  'privacy-checker': PrivacyCheckerTool,
-  'design-patterns': PatternViewer
+  'privacy-checker': PrivacyCheckerTool
 }
 </script>
 
 <template>
-  <div class="tool-page-overlay" @click="emit('close')">
-    <div class="tool-page" @click.stop>
+  <div class="tool-page-container">
+    <div class="tool-page">
       <div class="tool-page-header">
+        <button @click="emit('close')" class="back-btn" aria-label="返回">
+          <span class="back-icon">←</span>
+          <span>返回</span>
+        </button>
         <div class="tool-page-title">
           <span class="tool-page-icon">{{ tool.icon }}</span>
           <h2>{{ tool.name }}</h2>
         </div>
-        <button @click="emit('close')" class="close-btn">✕</button>
       </div>
       
       <div class="tool-page-content">
@@ -135,20 +136,9 @@ const toolComponents = {
 </template>
 
 <style scoped>
-.tool-page-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
-  z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  animation: fadeIn 0.2s;
+.tool-page-container {
+  width: 100%;
+  animation: fadeIn 0.3s;
 }
 
 @keyframes fadeIn {
@@ -158,33 +148,19 @@ const toolComponents = {
 
 .tool-page {
   background: var(--card-bg);
-  border-radius: 20px;
-  width: 100%;
-  max-width: 1000px;
-  max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  animation: slideUp 0.3s;
-}
-
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
 .tool-page-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 24px;
+  gap: 20px;
+  padding: 24px 32px;
   border-bottom: 1px solid var(--border-color);
+  background: var(--bg-color);
 }
 
 @media (max-width: 768px) {
@@ -193,10 +169,36 @@ const toolComponents = {
   }
 }
 
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  height: 36px;
+}
+
+.back-btn:hover {
+  background: var(--primary-hover);
+  transform: translateX(-2px);
+}
+
+.back-icon {
+  font-size: 18px;
+}
+
 .tool-page-title {
   display: flex;
   align-items: center;
   gap: 16px;
+  flex: 1;
 }
 
 .tool-page-icon {
@@ -221,30 +223,9 @@ const toolComponents = {
   }
 }
 
-.close-btn {
-  background: var(--bg-color);
-  border: 1px solid var(--border-color);
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  font-size: 20px;
-  cursor: pointer;
-  transition: all 0.2s;
-  color: var(--text-color);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.close-btn:hover {
-  background: var(--border-color);
-  transform: rotate(90deg);
-}
-
 .tool-page-content {
-  flex: 1;
-  overflow-y: auto;
-  padding: 24px;
+  padding: 32px;
+  min-height: 400px;
 }
 
 @media (max-width: 768px) {

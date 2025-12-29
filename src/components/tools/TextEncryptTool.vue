@@ -305,6 +305,7 @@ const handleAlgorithmChange = () => {
   border-radius: 12px;
   border: 1px solid var(--border-color);
   flex-wrap: wrap;
+  align-items: flex-end;
 }
 
 .mode-selector {
@@ -313,7 +314,7 @@ const handleAlgorithmChange = () => {
 }
 
 .mode-btn {
-  padding: 10px 20px;
+  padding: 8px 16px;
   background: var(--card-bg);
   border: 2px solid var(--border-color);
   border-radius: 8px;
@@ -322,6 +323,7 @@ const handleAlgorithmChange = () => {
   cursor: pointer;
   color: var(--text-color);
   transition: all 0.2s;
+  height: 38px;
 }
 
 .mode-btn:hover {
@@ -349,7 +351,7 @@ const handleAlgorithmChange = () => {
 }
 
 .algorithm-select {
-  padding: 10px 12px;
+  padding: 8px 12px;
   background: var(--card-bg);
   border: 2px solid var(--border-color);
   border-radius: 8px;
@@ -357,6 +359,7 @@ const handleAlgorithmChange = () => {
   color: var(--text-color);
   cursor: pointer;
   outline: none;
+  height: 38px;
 }
 
 .algorithm-select:focus {
@@ -378,13 +381,14 @@ const handleAlgorithmChange = () => {
 }
 
 .password-input {
-  padding: 10px 12px;
+  padding: 8px 12px;
   background: var(--card-bg);
   border: 2px solid var(--border-color);
   border-radius: 8px;
   font-size: 14px;
   color: var(--text-color);
   outline: none;
+  height: 38px;
 }
 
 .password-input:focus {
@@ -471,13 +475,14 @@ const handleAlgorithmChange = () => {
 .process-btn,
 .clear-btn {
   flex: 1;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  height: 40px;
 }
 
 .process-btn {

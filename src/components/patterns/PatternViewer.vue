@@ -2,29 +2,7 @@
   <div class="pattern-viewer">
     <!-- 主体内容区域 -->
     <div class="content">
-      <!-- 左侧：模式列表 -->
-      <div class="pattern-list">
-        <div v-for="category in Object.keys(categorizedPatterns)" :key="category" class="category-section">
-          <div class="category-header">
-            <span class="category-icon">{{ categories[category].icon }}</span>
-            <h3>{{ categories[category].name }}</h3>
-            <span class="pattern-count">{{ categorizedPatterns[category].length }}</span>
-          </div>
-          <div class="pattern-items">
-            <div
-              v-for="pattern in categorizedPatterns[category]"
-              :key="pattern.id"
-              :class="['pattern-item', { active: selectedPattern?.id === pattern.id }]"
-              @click="selectPattern(pattern)"
-            >
-              <div class="pattern-name">{{ pattern.name }}</div>
-              <div class="pattern-name-en">{{ pattern.nameEn }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- 右侧：代码展示区域 -->
+      <!-- 代码展示区域 -->
       <div class="code-area">
         <div v-if="selectedPattern" class="code-container">
           <!-- 模式信息（可滚动区域） -->
@@ -88,14 +66,33 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { patterns, categories, languages } from '../../data/patterns.js'
 import { patternCodes } from '../../data/pattern-codes.js'
 
+// Props
+const props = defineProps({
+  category: {
+    type: String,
+    default: 'all'
+  },
+  initialPattern: {
+    type: Object,
+    default: null
+  }
+})
+
 // 状态
-const selectedPattern = ref(null)
+const selectedPattern = ref(props.initialPattern)
 const selectedLanguage = ref('csharp')
 const codeCopied = ref(false)
+
+// 监听 initialPattern 的变化
+watch(() => props.initialPattern, (newPattern) => {
+  if (newPattern) {
+    selectedPattern.value = newPattern
+  }
+})
 
 // 计算属性
 const categorizedPatterns = computed(() => {
@@ -104,10 +101,32 @@ const categorizedPatterns = computed(() => {
     structural: [],
     behavioral: []
   }
-  patterns.forEach(pattern => {
+  
+  // 根据传入的category筛选模式
+  const filteredPatterns = props.category === 'all' 
+    ? patterns 
+    : patterns.filter(p => p.category === props.category)
+  
+  filteredPatterns.forEach(pattern => {
     result[pattern.category].push(pattern)
   })
+  
+  // 如果某个分类没有模式，删除该分类
+  Object.keys(result).forEach(key => {
+    if (result[key].length === 0) {
+      delete result[key]
+    }
+  })
+  
   return result
+})
+
+// 所有模式的扁平化列表
+const allPatterns = computed(() => {
+  if (props.category === 'all') {
+    return patterns
+  }
+  return patterns.filter(p => p.category === props.category)
 })
 
 const currentLanguage = computed(() => {
@@ -217,8 +236,8 @@ const copyCode = async () => {
 
 // 初始化
 onMounted(() => {
-  // 默认选择第一个模式
-  if (patterns.length > 0) {
+  // 如果有初始模式，使用初始模式，否则选择第一个
+  if (!selectedPattern.value && patterns.length > 0) {
     selectPattern(patterns[0])
   }
 })
@@ -226,104 +245,25 @@ onMounted(() => {
 
 <style scoped>
 .pattern-viewer {
-  padding: 20px;
-  max-width: 1400px;
-  margin: 0 auto;
+  padding: 0;
+  max-width: 100%;
+  margin: 0;
   height: 100%;
 }
 
 .content {
   display: flex;
-  gap: 20px;
+  gap: 0;
   height: 100%;
   min-height: 600px;
 }
 
-/* 左侧模式列表 */
-.pattern-list {
-  width: 320px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  padding: 20px;
-  overflow-y: auto;
-  flex-shrink: 0;
-}
-
-.category-section {
-  margin-bottom: 24px;
-}
-
-.category-header {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 12px;
-  padding-bottom: 8px;
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.category-icon {
-  font-size: 20px;
-}
-
-.category-header h3 {
-  font-size: 16px;
-  color: #2c3e50;
-  margin: 0;
-  flex: 1;
-}
-
-.pattern-count {
-  background: #3498db;
-  color: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: bold;
-}
-
-.pattern-items {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.pattern-item {
-  padding: 12px;
-  background: white;
-  border-radius: 6px;
-  cursor: pointer;
-  transition: all 0.2s;
-  border: 2px solid transparent;
-}
-
-.pattern-item:hover {
-  border-color: #3498db;
-  transform: translateX(4px);
-}
-
-.pattern-item.active {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border-color: #667eea;
-}
-
-.pattern-name {
-  font-weight: 600;
-  font-size: 14px;
-  margin-bottom: 4px;
-}
-
-.pattern-name-en {
-  font-size: 12px;
-  opacity: 0.8;
-}
-
-/* 右侧代码区域 */
+/* 代码展示区域 */
 .code-area {
   flex: 1;
+  width: 100%;
   background: white;
-  border-radius: 8px;
+  border-radius: 0;
   overflow: hidden;
   display: flex;
   flex-direction: column;

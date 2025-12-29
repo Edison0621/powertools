@@ -375,7 +375,7 @@ const formatSize = (bytes) => {
 }
 
 .action-btn {
-  padding: 10px 20px;
+  padding: 8px 16px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -384,6 +384,7 @@ const formatSize = (bytes) => {
   cursor: pointer;
   color: var(--text-color);
   transition: all 0.2s;
+  height: 36px;
 }
 
 .action-btn:hover:not(:disabled) {

@@ -484,13 +484,14 @@ generate()
 .copy-btn,
 .clear-btn {
   flex: 1;
-  padding: 12px 24px;
+  padding: 10px 20px;
   border: none;
   border-radius: 8px;
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
+  height: 40px;
 }
 
 .generate-btn {
