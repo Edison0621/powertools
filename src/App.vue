@@ -3,8 +3,10 @@ import { ref, computed, onMounted } from 'vue'
 import ToolCard from './components/ToolCard.vue'
 import ToolPage from './components/ToolPage.vue'
 import PatternViewer from './components/patterns/PatternViewer.vue'
+import TutorialViewer from './components/TutorialViewer.vue'
 import { tools } from './data/tools.js'
 import { patterns } from './data/patterns.js'
+import { htmlTutorial } from './data/tutorials/html-tutorial.js'
 
 const isDark = ref(false)
 const searchQuery = ref('')
@@ -14,8 +16,15 @@ const selectedPatternCategory = ref('all') // 设计模式子分类
 const expandedPatternCategory = ref(null) // 展开的设计模式二级分类
 const selectedPattern = ref(null) // 选中的具体模式
 const selectedTool = ref(null)
+const selectedTutorial = ref(null)
 const favorites = ref([])
 const isSidebarOpen = ref(true)
+
+// 教程数据映射
+const tutorialDataMap = {
+  'html': htmlTutorial,
+  // 后续添加其他教程
+}
 
 // 主导航分类
 const mainCategories = [
@@ -283,11 +292,6 @@ const filteredContent = computed(() => {
   })
 })
 
-const showPowerTools = computed(() => selectedCategory.value === 'powertools' && !selectedTool.value)
-const showDesignPattern = computed(() => selectedCategory.value === 'design-pattern')
-const showTutorials = computed(() => !showPowerTools.value && !showDesignPattern.value && !selectedTool.value)
-const showToolPage = computed(() => selectedTool.value !== null)
-
 const currentCategory = computed(() => {
   return mainCategories.find(cat => cat.id === selectedCategory.value) || mainCategories[0]
 })
@@ -334,6 +338,21 @@ const breadcrumbs = computed(() => {
     }
   }
   
+  // 如果在教程页面
+  if (showTutorialPage.value && selectedTutorial.value) {
+    const category = mainCategories.find(cat => cat.id === selectedCategory.value)
+    if (category) {
+      crumbs.push({
+        name: category.name,
+        icon: category.icon
+      })
+    }
+    crumbs.push({
+      name: selectedTutorial.value.name,
+      icon: '📖'
+    })
+  }
+  
   return crumbs
 })
 
@@ -368,6 +387,10 @@ const closeTool = () => {
 const selectCategory = (categoryId) => {
   selectedCategory.value = categoryId
   searchQuery.value = ''
+  // 切换分类时，关闭当前打开的教程
+  if (selectedTutorial.value) {
+    selectedTutorial.value = null
+  }
   // 切换到开发工具时，重置子分类为全部
   if (categoryId === 'powertools') {
     selectedToolCategory.value = 'all'
@@ -383,11 +406,19 @@ const selectCategory = (categoryId) => {
 
 const selectToolCategory = (categoryId) => {
   selectedToolCategory.value = categoryId
+  // 关闭教程，返回工具列表
+  if (selectedTutorial.value) {
+    selectedTutorial.value = null
+  }
   selectedTool.value = null // 关闭工具详情页，返回工具列表
 }
 
 const selectPatternCategory = (categoryId) => {
   selectedPatternCategory.value = categoryId
+  // 关闭教程，返回设计模式列表
+  if (selectedTutorial.value) {
+    selectedTutorial.value = null
+  }
   expandedPatternCategory.value = null
   selectedPattern.value = null
 }
@@ -402,6 +433,10 @@ const togglePatternCategory = (categoryId) => {
     expandedPatternCategory.value = categoryId
     selectedPatternCategory.value = categoryId
   }
+  // 关闭教程，返回设计模式列表
+  if (selectedTutorial.value) {
+    selectedTutorial.value = null
+  }
   selectedPattern.value = null
 }
 
@@ -411,8 +446,51 @@ const selectSpecificPattern = (categoryId, pattern) => {
 }
 
 const openTutorial = (tutorial) => {
-  alert(`打开教程: ${tutorial.name}\n\n这里将展示 ${tutorial.name} 的详细内容`)
+  const tutorialData = tutorialDataMap[tutorial.id]
+  if (tutorialData) {
+    // 自动切换到教程所属的分类
+    if (tutorial.category) {
+      selectedCategory.value = tutorial.category
+    }
+    selectedTutorial.value = tutorialData
+  } else {
+    alert(`教程内容开发中: ${tutorial.name}`)
+  }
 }
+
+const closeTutorial = () => {
+  selectedTutorial.value = null
+}
+
+// 计算属性: 是否显示开发工具页
+const showPowerTools = computed(() => {
+  return selectedCategory.value === 'powertools' && !selectedTool.value
+})
+
+// 计算属性: 是否显示工具详情页
+const showToolPage = computed(() => {
+  return selectedTool.value !== null
+})
+
+// 计算属性: 是否显示设计模式页
+const showDesignPattern = computed(() => {
+  return selectedCategory.value === 'design-pattern'
+})
+
+// 计算属性: 是否显示教程页
+const showTutorialPage = computed(() => {
+  return selectedTutorial.value !== null
+})
+
+// 计算属性: 是否显示教程列表
+const showTutorials = computed(() => {
+  return !showPowerTools.value && !showDesignPattern.value && !selectedTool.value && !showTutorialPage.value
+})
+
+// 计算属性: 获取当前教程数据
+const currentTutorialData = computed(() => {
+  return selectedTutorial.value
+})
 
 onMounted(() => {
   const savedTheme = localStorage.getItem('theme')
@@ -661,6 +739,14 @@ onMounted(() => {
           <!-- 设计模式页面 -->
           <section v-if="showDesignPattern" class="content-section pattern-section" aria-label="设计模式">
             <PatternViewer :category="selectedPatternCategory" :initial-pattern="selectedPattern" />
+          </section>
+
+          <!-- 教程详情页 -->
+          <section v-if="showTutorialPage" class="content-section tutorial-section" aria-label="教程详情">
+            <TutorialViewer
+              :tutorialData="currentTutorialData"
+              @close="closeTutorial"
+            />
           </section>
 
           <!-- 空状态 -->
