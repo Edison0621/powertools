@@ -47,6 +47,7 @@ import PasswordStrengthTool from './tools/PasswordStrengthTool.vue'
 import DataMaskingTool from './tools/DataMaskingTool.vue'
 import SecureDeleteTool from './tools/SecureDeleteTool.vue'
 import PrivacyCheckerTool from './tools/PrivacyCheckerTool.vue'
+import PatternViewer from './patterns/PatternViewer.vue'
 
 const props = defineProps({
   tool: Object
@@ -102,7 +103,8 @@ const toolComponents = {
   'password-strength': PasswordStrengthTool,
   'data-masking': DataMaskingTool,
   'secure-delete': SecureDeleteTool,
-  'privacy-checker': PrivacyCheckerTool
+  'privacy-checker': PrivacyCheckerTool,
+  'design-patterns': PatternViewer
 }
 </script>
 

@@ -119,6 +119,14 @@ export const tools = [
 
   // 开发工具
   {
+    id: 'design-patterns',
+    name: '设计模式',
+    description: '23种经典设计模式的C#、Java、Go、Rust代码示例',
+    icon: '💎',
+    category: 'dev',
+    tags: ['设计模式', '代码示例', '架构']
+  },
+  {
     id: 'regex-tester',
     name: '正则测试',
     description: '测试和调试正则表达式',
