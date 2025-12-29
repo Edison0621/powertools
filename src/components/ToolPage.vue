@@ -152,13 +152,14 @@ const toolComponents = {
   border: 1px solid var(--border-color);
   overflow: hidden;
   box-shadow: var(--shadow);
+  margin: 0;
 }
 
 .tool-page-header {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding: 24px 32px;
+  padding: 24px;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-color);
 }
@@ -224,7 +225,7 @@ const toolComponents = {
 }
 
 .tool-page-content {
-  padding: 32px;
+  padding: 24px;
   min-height: 400px;
 }
 

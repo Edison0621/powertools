@@ -6,7 +6,7 @@
       <div class="code-area">
         <div v-if="selectedPattern" class="code-container">
           <!-- 模式信息（可滚动区域） -->
-          <div class="pattern-info-wrapper">
+          <div class="pattern-info-wrapper" @scroll="handleScroll" ref="scrollContainer">
             <div class="pattern-info">
               <h2>{{ selectedPattern.name }} <span class="pattern-name-en">{{ selectedPattern.nameEn }}</span></h2>
               <p class="pattern-desc">{{ selectedPattern.description }}</p>
@@ -24,6 +24,13 @@
                     <span>{{ item }}</span>
                   </div>
                 </div>
+              </div>
+            </div>
+            <!-- 滚动提示指示器 -->
+            <div v-if="showScrollHint" class="scroll-hint" @click="scrollToBottom">
+              <div class="scroll-hint-content">
+                <span class="scroll-icon">👇</span>
+                <span class="scroll-text">向下滚动查看更多</span>
               </div>
             </div>
           </div>
@@ -86,6 +93,8 @@ const props = defineProps({
 const selectedPattern = ref(props.initialPattern)
 const selectedLanguage = ref('csharp')
 const codeCopied = ref(false)
+const scrollContainer = ref(null)
+const showScrollHint = ref(true)
 
 // 监听 initialPattern 的变化
 watch(() => props.initialPattern, (newPattern) => {
@@ -220,6 +229,35 @@ function highlightCode(code, lang) {
 const selectPattern = (pattern) => {
   selectedPattern.value = pattern
   codeCopied.value = false
+  // 重置滚动提示
+  showScrollHint.value = true
+  // 滚动到顶部
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTop = 0
+  }
+}
+
+const handleScroll = (e) => {
+  const container = e.target
+  const scrollTop = container.scrollTop
+  const scrollHeight = container.scrollHeight
+  const clientHeight = container.clientHeight
+  
+  // 如果滚动超过20px或者已经到底部，隐藏提示
+  if (scrollTop > 20 || scrollTop + clientHeight >= scrollHeight - 10) {
+    showScrollHint.value = false
+  } else {
+    showScrollHint.value = true
+  }
+}
+
+const scrollToBottom = () => {
+  if (scrollContainer.value) {
+    scrollContainer.value.scrollTo({
+      top: scrollContainer.value.scrollHeight,
+      behavior: 'smooth'
+    })
+  }
 }
 
 const copyCode = async () => {
@@ -240,6 +278,14 @@ onMounted(() => {
   if (!selectedPattern.value && patterns.length > 0) {
     selectPattern(patterns[0])
   }
+  
+  // 检查是否需要显示滚动提示
+  setTimeout(() => {
+    if (scrollContainer.value) {
+      const hasScroll = scrollContainer.value.scrollHeight > scrollContainer.value.clientHeight
+      showScrollHint.value = hasScroll
+    }
+  }, 100)
 })
 </script>
 
@@ -249,6 +295,11 @@ onMounted(() => {
   max-width: 100%;
   margin: 0;
   height: 100%;
+  background: var(--card-bg);
+  border-radius: 16px;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  box-shadow: var(--shadow);
 }
 
 .content {
@@ -283,6 +334,71 @@ onMounted(() => {
   flex-shrink: 0;
   background: white;
   border-bottom: 1px solid #e0e0e0;
+  position: relative;
+  /* 添加渐变阴影提示有内容可滚动 */
+  box-shadow: inset 0 -30px 20px -20px rgba(52, 152, 219, 0.15);
+}
+
+/* 滚动提示指示器 */
+.scroll-hint {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  background: linear-gradient(to bottom, 
+    rgba(255, 255, 255, 0) 0%, 
+    rgba(255, 255, 255, 0.8) 30%,
+    rgba(255, 255, 255, 0.95) 100%);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: 10px;
+  pointer-events: none;
+  animation: scrollHintPulse 2s ease-in-out infinite;
+  z-index: 10;
+}
+
+.scroll-hint-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  color: white;
+  padding: 8px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.scroll-icon {
+  font-size: 18px;
+  animation: scrollArrowBounce 1.5s ease-in-out infinite;
+}
+
+.scroll-text {
+  letter-spacing: 0.3px;
+}
+
+@keyframes scrollHintPulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+
+@keyframes scrollArrowBounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(4px);
+  }
 }
 
 .pattern-info {
@@ -538,32 +654,33 @@ onMounted(() => {
   font-weight: 500;
 }
 
-/* 滚动条样式 */
+/* 滚动条样式 - 更显眼的样式 */
 .pattern-list::-webkit-scrollbar,
 .code-content::-webkit-scrollbar,
 .pattern-info-wrapper::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+  width: 10px;
+  height: 10px;
 }
 
 .pattern-list::-webkit-scrollbar-track,
 .code-content::-webkit-scrollbar-track,
 .pattern-info-wrapper::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 4px;
+  background: #ecf0f1;
+  border-radius: 5px;
 }
 
 .pattern-list::-webkit-scrollbar-thumb,
 .code-content::-webkit-scrollbar-thumb,
 .pattern-info-wrapper::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
+  background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+  border-radius: 5px;
+  border: 2px solid #ecf0f1;
 }
 
 .pattern-list::-webkit-scrollbar-thumb:hover,
 .code-content::-webkit-scrollbar-thumb:hover,
 .pattern-info-wrapper::-webkit-scrollbar-thumb:hover {
-  background: #555;
+  background: linear-gradient(135deg, #2980b9 0%, #1f6ba5 100%);
 }
 
 /* 响应式设计 */
@@ -584,6 +701,20 @@ onMounted(() => {
 
   .header h1 {
     font-size: 24px;
+  }
+  
+  .scroll-hint {
+    height: 50px;
+    padding-bottom: 8px;
+  }
+  
+  .scroll-hint-content {
+    padding: 6px 16px;
+    font-size: 13px;
+  }
+  
+  .scroll-icon {
+    font-size: 16px;
   }
 }
 </style>
