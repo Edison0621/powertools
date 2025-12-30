@@ -7,6 +7,8 @@ import TutorialViewer from './components/TutorialViewer.vue'
 import { tools } from './data/tools.js'
 import { patterns } from './data/patterns.js'
 import { htmlTutorial } from './data/tutorials/html-tutorial.js'
+import { cssTutorial } from './data/tutorials/css-tutorial.js'
+import { javascriptTutorial } from './data/tutorials/javascript-tutorial.js'
 
 const isDark = ref(false)
 const searchQuery = ref('')
@@ -23,6 +25,8 @@ const isSidebarOpen = ref(true)
 // 教程数据映射
 const tutorialDataMap = {
   'html': htmlTutorial,
+  'css': cssTutorial,
+  'javascript': javascriptTutorial,
   // 后续添加其他教程
 }
 

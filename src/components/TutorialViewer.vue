@@ -256,10 +256,250 @@ const copyCode = async (code) => {
   }
 }
 
-// HTML 代码语法高亮
+// 检测代码语言
+const detectLanguage = (code) => {
+  if (!code) return 'html'
+  
+  // JavaScript 特征检测（优先级最高）
+  const jsPatterns = [
+    /\b(const|let|var)\s+\w+\s*=/,  // 变量声明
+    /\bfunction\s+\w+\s*\(/,        // 函数声明
+    /=>/,                            // 箭头函数
+    /\bconsole\.(log|error|warn)/,  // console
+    /\b(if|else|for|while)\s*\(/,   // 控制流
+    /\/\/\s*.+/,                     // 单行注释
+  ]
+  
+  // 如果匹配多个JS特征，很可能是JavaScript
+  const jsMatchCount = jsPatterns.filter(pattern => pattern.test(code)).length
+  if (jsMatchCount >= 2) {
+    return 'javascript'
+  }
+  
+  // CSS 特征检测
+  if (code.includes('{') && code.includes('}') && 
+      (code.includes(':') || code.match(/[.#][a-zA-Z-_]/))) {
+    // 如果包含 HTML 标签，则是 HTML
+    if (code.match(/&lt;[a-zA-Z]/) || code.match(/<[a-zA-Z]/)) {
+      return 'html'
+    }
+    // 如果有JS关键字，可能是JavaScript
+    if (jsMatchCount >= 1) {
+      return 'javascript'
+    }
+    return 'css'
+  }
+  
+  // HTML 特征检测
+  if (code.includes('<!DOCTYPE') || code.includes('<html') || 
+      code.match(/<[a-zA-Z]/) || code.match(/&lt;[a-zA-Z]/)) {
+    return 'html'
+  }
+  
+  return 'html' // 默认
+}
+
+// 多语言代码语法高亮
 const highlightCode = (code) => {
   if (!code) return ''
   
+  const lang = detectLanguage(code)
+  
+  if (lang === 'css') {
+    return highlightCssCode(code)
+  } else if (lang === 'javascript') {
+    return highlightJsCode(code)
+  } else {
+    return highlightHtmlCode(code)
+  }
+}
+
+// CSS 代码高亮
+const highlightCssCode = (code) => {
+  // 1. 转义 HTML 特殊字符
+  let result = code
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+  
+  // 标记需要保护的内容
+  const protectedRanges = []
+  
+  // 2. 保存注释
+  const commentRegex = /(\/\*[\s\S]*?\*\/)/g
+  let match
+  while ((match = commentRegex.exec(result)) !== null) {
+    const start = match.index
+    const end = start + match[0].length
+    protectedRanges.push({ start, end, replacement: `<span class="comment">${match[0]}</span>` })
+  }
+  
+  // 3. 保存字符串（单引号和双引号）
+  const stringRegex = /(["'])(?:\\.|(?!\1)[^\\])*\1/g
+  while ((match = stringRegex.exec(result)) !== null) {
+    const start = match.index
+    const end = start + match[0].length
+    // 检查是否在保护区域内
+    if (!protectedRanges.some(r => start >= r.start && end <= r.end)) {
+      protectedRanges.push({ start, end, replacement: `<span class="string">${match[0]}</span>` })
+    }
+  }
+  
+  // 按位置排序，从后向前替换
+  protectedRanges.sort((a, b) => b.start - a.start)
+  protectedRanges.forEach(range => {
+    result = result.substring(0, range.start) + range.replacement + result.substring(range.end)
+  })
+  
+  // 4. CSS 关键字高亮
+  const cssKeywords = [
+    // At-rules
+    '@import', '@media', '@charset', '@namespace', '@keyframes', '@font-face',
+    '@supports', '@page', '@-webkit-keyframes', '@-moz-keyframes',
+    // 重要关键字
+    '!important',
+    // 伪类
+    'hover', 'active', 'focus', 'visited', 'link', 'first-child', 'last-child',
+    'nth-child', 'nth-of-type', 'not', 'before', 'after', 'first-line', 'first-letter',
+    // 值关键字
+    'inherit', 'initial', 'unset', 'none', 'auto', 'block', 'inline', 'inline-block',
+    'flex', 'grid', 'absolute', 'relative', 'fixed', 'sticky', 'static',
+    'hidden', 'visible', 'scroll', 'center', 'left', 'right', 'top', 'bottom',
+    'bold', 'normal', 'italic', 'underline', 'transparent', 'solid', 'dashed',
+    'dotted', 'double', 'cover', 'contain', 'repeat', 'no-repeat', 'space', 'round'
+  ]
+  
+  cssKeywords.forEach(keyword => {
+    const regex = new RegExp(`\\b(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})\\b(?![^<]*>)`, 'gi')
+    result = result.replace(regex, '<span class="keyword">$1</span>')
+  })
+  
+  // 5. 选择器高亮（类、ID、标签、属性选择器）
+  // 类选择器
+  result = result.replace(/(\.)[a-zA-Z_-][a-zA-Z0-9_-]*(?![^<]*>)/g, '<span class="selector">$&</span>')
+  // ID选择器
+  result = result.replace(/(#)[a-zA-Z_-][a-zA-Z0-9_-]*(?![^<]*>)/g, '<span class="selector">$&</span>')
+  // 标签选择器（行首或逗号后的）
+  result = result.replace(/(^|[,\n\r])\s*([a-z][a-z0-9-]*)(?=\s*[{,:]|\s+[.#:[>+~])(?![^<]*>)/gm, '$1<span class="selector">$2</span>')
+  
+  // 6. 属性名高亮
+  result = result.replace(/([a-z-]+)(?=\s*:)(?![^<]*>)/g, '<span class="property">$1</span>')
+  
+  // 7. 数字和单位高亮
+  result = result.replace(/\b(\d+(?:\.\d+)?)(px|em|rem|%|vh|vw|vmin|vmax|pt|cm|mm|in|deg|rad|turn|s|ms)?\b(?![^<]*>)/g, 
+    '<span class="number">$1</span><span class="unit">$2</span>')
+  
+  // 8. 颜色值高亮
+  result = result.replace(/(#[0-9a-fA-F]{3,8})(?![^<]*>)/g, '<span class="color">$1</span>')
+  result = result.replace(/\b(rgb|rgba|hsl|hsla)(?=\()(?![^<]*>)/g, '<span class="color">$1</span>')
+  
+  return result
+}
+
+// JavaScript 代码高亮
+const highlightJsCode = (code) => {
+  // 1. 转义 HTML 特殊字符
+  let result = code
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+  
+  // 标记需要保护的内容
+  const protectedRanges = []
+  
+  // 2. 保存注释
+  // 多行注释
+  const multiCommentRegex = /(\/\*[\s\S]*?\*\/)/g
+  let match
+  while ((match = multiCommentRegex.exec(result)) !== null) {
+    const start = match.index
+    const end = start + match[0].length
+    protectedRanges.push({ start, end, replacement: `<span class="comment">${match[0]}</span>` })
+  }
+  
+  // 单行注释
+  const singleCommentRegex = /(\/\/[^\n]*)/g
+  while ((match = singleCommentRegex.exec(result)) !== null) {
+    const start = match.index
+    const end = start + match[0].length
+    // 检查是否在保护区域内
+    if (!protectedRanges.some(r => start >= r.start && end <= r.end)) {
+      protectedRanges.push({ start, end, replacement: `<span class="comment">${match[0]}</span>` })
+    }
+  }
+  
+  // 3. 保存字符串
+  // 模板字符串
+  const templateStringRegex = /(`(?:[^`\\]|\\.)*`)/g
+  while ((match = templateStringRegex.exec(result)) !== null) {
+    const start = match.index
+    const end = start + match[0].length
+    if (!protectedRanges.some(r => start >= r.start && end <= r.end)) {
+      protectedRanges.push({ start, end, replacement: `<span class="string">${match[0]}</span>` })
+    }
+  }
+  
+  // 普通字符串
+  const stringRegex = /(["'])(?:\\.|(?!\1)[^\\])*\1/g
+  while ((match = stringRegex.exec(result)) !== null) {
+    const start = match.index
+    const end = start + match[0].length
+    if (!protectedRanges.some(r => start >= r.start && end <= r.end)) {
+      protectedRanges.push({ start, end, replacement: `<span class="string">${match[0]}</span>` })
+    }
+  }
+  
+  // 4. 正则表达式
+  const regexRegex = /(\/(?![*\/])(?:\\.|[^\\\n\/])+\/[gimyus]*)/g
+  while ((match = regexRegex.exec(result)) !== null) {
+    const start = match.index
+    const end = start + match[0].length
+    if (!protectedRanges.some(r => start >= r.start && end <= r.end)) {
+      protectedRanges.push({ start, end, replacement: `<span class="string">${match[0]}</span>` })
+    }
+  }
+  
+  // 按位置排序，从后向前替换
+  protectedRanges.sort((a, b) => b.start - a.start)
+  protectedRanges.forEach(range => {
+    result = result.substring(0, range.start) + range.replacement + result.substring(range.end)
+  })
+  
+  // 5. JavaScript 关键字高亮
+  const jsKeywords = [
+    // 声明
+    'const', 'let', 'var', 'function', 'class', 'extends', 'import', 'export', 'default',
+    'from', 'as', 'async', 'await',
+    // 控制流
+    'if', 'else', 'switch', 'case', 'break', 'default', 'for', 'while', 'do',
+    'continue', 'return', 'try', 'catch', 'finally', 'throw',
+    // 值
+    'true', 'false', 'null', 'undefined', 'NaN', 'Infinity',
+    // 其他
+    'new', 'this', 'super', 'typeof', 'instanceof', 'delete', 'void',
+    'in', 'of', 'with', 'yield', 'static', 'get', 'set'
+  ]
+  
+  jsKeywords.forEach(keyword => {
+    const regex = new RegExp(`\\b(${keyword})\\b(?![^<]*>)`, 'g')
+    result = result.replace(regex, '<span class="keyword">$1</span>')
+  })
+  
+  // 6. 数字高亮
+  result = result.replace(/\b(\d+(?:\.\d+)?(?:e[+-]?\d+)?|0x[0-9a-fA-F]+|0o[0-7]+|0b[01]+)n?\b(?![^<]*>)/g, 
+    '<span class="number">$1</span>')
+  
+  // 7. 函数调用高亮
+  result = result.replace(/\b([a-zA-Z_$][a-zA-Z0-9_$]*)(?=\s*\()(?![^<]*>)/g, '<span class="function">$1</span>')
+  
+  // 8. 类名高亮（大写开头）
+  result = result.replace(/\b([A-Z][a-zA-Z0-9_$]*)\b(?![^<]*>)/g, '<span class="type">$1</span>')
+  
+  return result
+}
+
+// HTML 代码高亮
+const highlightHtmlCode = (code) => {
   // 1. 先转义 HTML 特殊字符
   let result = code
     .replace(/&/g, '&amp;')
@@ -292,11 +532,11 @@ const highlightCode = (code) => {
       if (processedAttrs && processedAttrs.trim()) {
         // 3.1 保护字符串
         const strings = []
-        processedAttrs = processedAttrs.replace(/("[\s\S]*?")/g, (str) => {
+        processedAttrs = processedAttrs.replace(/"[\s\S]*?"/g, (str) => {
           strings.push(`<span class="string">${str}</span>`)
           return `___STR${strings.length - 1}___`
         })
-        processedAttrs = processedAttrs.replace(/('[\s\S]*?')/g, (str) => {
+        processedAttrs = processedAttrs.replace(/'[\s\S]*?'/g, (str) => {
           strings.push(`<span class="string">${str}</span>`)
           return `___STR${strings.length - 1}___`
         })
@@ -651,6 +891,43 @@ onMounted(() => {
   color: #c586c0;
 }
 
+/* CSS 语法高亮 */
+.code-example code :deep(.selector) {
+  color: #d7ba7d;
+  font-weight: 600;
+}
+
+.code-example code :deep(.property) {
+  color: #9cdcfe;
+}
+
+.code-example code :deep(.unit) {
+  color: #b5cea8;
+}
+
+.code-example code :deep(.color) {
+  color: #ce9178;
+  font-weight: 600;
+}
+
+/* JavaScript 语法高亮 */
+.code-example code :deep(.keyword) {
+  color: #569cd6;
+  font-weight: 600;
+}
+
+.code-example code :deep(.function) {
+  color: #dcdcaa;
+}
+
+.code-example code :deep(.type) {
+  color: #4ec9b0;
+}
+
+.code-example code :deep(.number) {
+  color: #b5cea8;
+}
+
 /* 暗色模式下的语法高亮 */
 .dark .code-example code :deep(.comment) {
   color: #6a9955;
@@ -670,6 +947,40 @@ onMounted(() => {
 
 .dark .code-example code :deep(.doctype) {
   color: #c586c0;
+}
+
+/* 暗色模式下的 CSS 语法高亮 */
+.dark .code-example code :deep(.selector) {
+  color: #d7ba7d;
+}
+
+.dark .code-example code :deep(.property) {
+  color: #9cdcfe;
+}
+
+.dark .code-example code :deep(.unit) {
+  color: #b5cea8;
+}
+
+.dark .code-example code :deep(.color) {
+  color: #ce9178;
+}
+
+/* 暗色模式下的 JavaScript 语法高亮 */
+.dark .code-example code :deep(.keyword) {
+  color: #569cd6;
+}
+
+.dark .code-example code :deep(.function) {
+  color: #dcdcaa;
+}
+
+.dark .code-example code :deep(.type) {
+  color: #4ec9b0;
+}
+
+.dark .code-example code :deep(.number) {
+  color: #b5cea8;
 }
 
 .section-nav {
