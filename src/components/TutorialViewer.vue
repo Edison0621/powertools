@@ -357,12 +357,12 @@ onMounted(() => {
 }
 
 .tutorial-header {
-  padding: 16px 24px;
+  padding: 10px 16px;
   border-bottom: 1px solid var(--border-color);
   background: var(--bg-color);
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .close-btn {
@@ -393,7 +393,7 @@ onMounted(() => {
 }
 
 .tutorial-title {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
   margin: 0;
   color: var(--text-color);
@@ -406,17 +406,17 @@ onMounted(() => {
 
 .tutorial-info {
   display: flex;
-  gap: 8px;
+  gap: 4px;
   align-items: center;
   flex-wrap: wrap;
 }
 
 .badge {
-  padding: 4px 10px;
+  padding: 2px 6px;
   background: var(--primary-color);
   color: white;
-  border-radius: 16px;
-  font-size: 12px;
+  border-radius: 10px;
+  font-size: 10px;
   font-weight: 600;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
@@ -442,18 +442,18 @@ onMounted(() => {
 }
 
 .tutorial-sidebar {
-  width: 260px;
+  width: 220px;
   background: var(--sidebar-bg, #f8f9fa);
   border-right: 1px solid var(--border-color);
-  padding: 16px;
+  padding: 10px;
   overflow-y: auto;
   flex-shrink: 0;
 }
 
 .sidebar-title {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   color: var(--text-color);
   display: flex;
   align-items: center;
@@ -461,17 +461,17 @@ onMounted(() => {
 }
 
 .chapter-nav {
-  margin-bottom: 24px;
+  margin-bottom: 16px;
 }
 
 .chapter-item {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .chapter-header {
-  padding: 10px 12px;
+  padding: 6px 8px;
   background: var(--card-bg);
-  border-radius: 8px;
+  border-radius: 6px;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -496,27 +496,27 @@ onMounted(() => {
 
 .chapter-title {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 12px;
 }
 
 .chapter-duration {
-  font-size: 11px;
+  font-size: 10px;
   opacity: 0.8;
   background: rgba(0,0,0,0.1);
-  padding: 1px 5px;
+  padding: 1px 4px;
   border-radius: 3px;
 }
 
 .section-list {
-  margin-top: 6px;
-  margin-left: 10px;
-  padding-left: 10px;
+  margin-top: 3px;
+  margin-left: 6px;
+  padding-left: 6px;
   border-left: 2px solid var(--border-color);
 }
 
 .section-item {
-  padding: 8px 12px;
-  font-size: 13px;
+  padding: 4px 8px;
+  font-size: 11px;
   color: var(--text-secondary);
   cursor: pointer;
   border-radius: 6px;
@@ -549,27 +549,27 @@ onMounted(() => {
 }
 
 .resources-section {
-  margin-top: 24px;
-  padding-top: 16px;
+  margin-top: 16px;
+  padding-top: 12px;
   border-top: 1px solid var(--border-color);
 }
 
 .resources-section h4 {
-  font-size: 14px;
-  margin-bottom: 12px;
+  font-size: 13px;
+  margin-bottom: 8px;
   color: var(--text-color);
   font-weight: 600;
 }
 
 .resource-link {
   display: block;
-  padding: 8px 12px;
+  padding: 5px 8px;
   color: var(--text-color);
   text-decoration: none;
-  font-size: 13px;
+  font-size: 11px;
   border-radius: 6px;
   transition: all 0.2s;
-  margin-bottom: 6px;
+  margin-bottom: 3px;
   background: white;
   border: 1px solid var(--border-color);
 }
@@ -582,7 +582,7 @@ onMounted(() => {
 
 .tutorial-main {
   flex: 1;
-  padding: 24px 32px;
+  padding: 12px 20px;
   overflow-y: auto;
   scroll-behavior: smooth;
 }
@@ -593,26 +593,26 @@ onMounted(() => {
 }
 
 .section-title {
-  font-size: 24px;
+  font-size: 18px;
   font-weight: 700;
-  margin-bottom: 16px;
+  margin-bottom: 10px;
   color: var(--text-color);
-  padding-bottom: 12px;
+  padding-bottom: 8px;
   border-bottom: 1px solid var(--border-color);
   letter-spacing: -0.5px;
 }
 
 .content-text {
   color: var(--text-color);
-  line-height: 1.6;
-  font-size: 15px;
-  margin-bottom: 24px;
+  line-height: 1.35;
+  font-size: 13px;
+  margin-bottom: 16px;
 }
 
 .content-text :deep(h2) {
-  font-size: 18px;
-  margin-top: 24px;
-  margin-bottom: 12px;
+  font-size: 16px;
+  margin-top: 14px;
+  margin-bottom: 8px;
   color: var(--text-color);
   font-weight: 700;
   display: flex;
@@ -629,15 +629,15 @@ onMounted(() => {
 }
 
 .content-text :deep(h3) {
-  font-size: 16px;
-  margin-top: 20px;
-  margin-bottom: 10px;
+  font-size: 14px;
+  margin-top: 12px;
+  margin-bottom: 6px;
   color: var(--text-color);
   font-weight: 600;
 }
 
 .content-text :deep(p) {
-  margin-bottom: 10px;
+  margin-bottom: 6px;
   color: #4a5568;
 }
 
@@ -646,12 +646,12 @@ onMounted(() => {
 }
 
 .content-text :deep(ul) {
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   padding-left: 20px;
 }
 
 .content-text :deep(li) {
-  margin-bottom: 4px;
+  margin-bottom: 2px;
   position: relative;
 }
 
@@ -666,7 +666,7 @@ onMounted(() => {
 }
 
 .code-example {
-  margin: 16px 0;
+  margin: 10px 0;
   border-radius: 8px;
   overflow: hidden;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
@@ -677,27 +677,27 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 8px 16px;
+  padding: 4px 10px;
   background: #21252b;
   border-bottom: 1px solid #181a1f;
 }
 
 .code-lang {
   color: #abb2bf;
-  font-size: 12px;
+  font-size: 10px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
 .copy-btn {
-  padding: 4px 10px;
+  padding: 3px 8px;
   background: rgba(255,255,255,0.1);
   color: #abb2bf;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 11px;
+  font-size: 10px;
   transition: all 0.2s;
   font-weight: 500;
 }
@@ -709,15 +709,15 @@ onMounted(() => {
 
 .code-example pre {
   margin: 0;
-  padding: 16px;
+  padding: 10px;
   overflow-x: auto;
   background: #282c34;
 }
 
 .code-example code {
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 13px;
-  line-height: 1.5;
+  font-size: 11px;
+  line-height: 1.35;
   background: transparent;
 }
 
@@ -725,19 +725,19 @@ onMounted(() => {
 .section-nav {
   display: flex;
   justify-content: space-between;
-  margin-top: 40px;
-  padding-top: 24px;
+  margin-top: 24px;
+  padding-top: 16px;
   border-top: 1px solid var(--border-color);
 }
 
 .nav-btn {
-  padding: 10px 24px;
+  padding: 6px 16px;
   background: white;
   border: 1px solid var(--border-color);
   color: var(--text-color);
   border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 600;
   transition: all 0.2s;
   display: flex;
@@ -817,7 +817,7 @@ onMounted(() => {
 
 .project-card p {
   color: var(--text-secondary);
-  line-height: 1.5;
+  line-height: 1.35;
   font-size: 13px;
   margin: 0;
 }
