@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '../../stores/app'
 import { storeToRefs } from 'pinia'
@@ -10,6 +10,17 @@ const store = useAppStore()
 const { isSidebarOpen } = storeToRefs(store)
 
 const expandedPatternCategory = ref(null)
+
+// Watch for route changes to expand categories
+watch(
+  () => route.query.category,
+  (newCategory) => {
+    if (newCategory && newCategory !== 'all' && route.path.startsWith('/patterns')) {
+      expandedPatternCategory.value = newCategory
+    }
+  },
+  { immediate: true }
+)
 
 const activeMainCategory = computed(() => {
   if (route.path === '/') return 'home'
