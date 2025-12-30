@@ -50,7 +50,7 @@
         </nav>
 
         <!-- 学习资源 -->
-        <div class="resources-section">
+        <div v-if="tutorialData.resources && tutorialData.resources.length > 0" class="resources-section">
           <h4>📖 学习资源</h4>
           <div class="resource-links">
             <a 
@@ -223,7 +223,21 @@ const gotoNextSection = () => {
 const renderMarkdown = (text) => {
   if (!text) return ''
   
-  return text
+  // 首先转义代码块中的内容（用反引号包裹的）
+  const codeBlocks = []
+  let processedText = text.replace(/`([^`]+)`/g, (match, code) => {
+    const index = codeBlocks.length
+    // 转义HTML标签，防止被浏览器解析
+    const escapedCode = code
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+    codeBlocks.push(escapedCode)
+    return `__CODE_BLOCK_${index}__`
+  })
+  
+  // 渲染其他Markdown语法
+  processedText = processedText
     // 标题
     .replace(/^### (.*$)/gim, '<h3>$1</h3>')
     .replace(/^## (.*$)/gim, '<h2>$1</h2>')
@@ -232,8 +246,6 @@ const renderMarkdown = (text) => {
     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
     // 斜体
     .replace(/\*(.*?)\*/g, '<em>$1</em>')
-    // 代码
-    .replace(/`([^`]+)`/g, '<code class="inline-code">$1</code>')
     // 列表
     .replace(/^\- (.*$)/gim, '<li>$1</li>')
     .replace(/(<li>.*<\/li>)/s, '<ul>$1</ul>')
@@ -243,6 +255,13 @@ const renderMarkdown = (text) => {
     .split('\n\n')
     .map(para => para.trim() ? `<p>${para}</p>` : '')
     .join('\n')
+  
+  // 恢复代码块，使用转义后的HTML
+  processedText = processedText.replace(/__CODE_BLOCK_(\d+)__/g, (match, index) => {
+    return `<code class="inline-code">${codeBlocks[index]}</code>`
+  })
+  
+  return processedText
 }
 
 // 复制代码
@@ -388,8 +407,10 @@ onMounted(() => {
 
 .tutorial-meta {
   display: flex;
-  flex-direction: column;
-  gap: 8px;
+  flex-direction: row;
+  align-items: center;
+  gap: 16px;
+  justify-content: flex-end;
 }
 
 .tutorial-title {
@@ -401,7 +422,7 @@ onMounted(() => {
   background: linear-gradient(120deg, var(--primary-color), #8e44ad);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  width: fit-content;
+  white-space: nowrap;
 }
 
 .tutorial-info {
@@ -496,7 +517,7 @@ onMounted(() => {
 
 .chapter-title {
   font-weight: 600;
-  font-size: 12px;
+  font-size: 13px;
 }
 
 .chapter-duration {
@@ -516,7 +537,7 @@ onMounted(() => {
 
 .section-item {
   padding: 4px 8px;
-  font-size: 11px;
+  font-size: 12px;
   color: var(--text-secondary);
   cursor: pointer;
   border-radius: 6px;
@@ -604,15 +625,15 @@ onMounted(() => {
 
 .content-text {
   color: var(--text-color);
-  line-height: 1.35;
-  font-size: 13px;
-  margin-bottom: 16px;
+  line-height: 1.8;
+  font-size: 14px;
+  margin-bottom: 20px;
 }
 
 .content-text :deep(h2) {
-  font-size: 16px;
-  margin-top: 14px;
-  margin-bottom: 8px;
+  font-size: 18px;
+  margin-top: 20px;
+  margin-bottom: 12px;
   color: var(--text-color);
   font-weight: 700;
   display: flex;
@@ -629,15 +650,15 @@ onMounted(() => {
 }
 
 .content-text :deep(h3) {
-  font-size: 14px;
-  margin-top: 12px;
-  margin-bottom: 6px;
+  font-size: 16px;
+  margin-top: 16px;
+  margin-bottom: 10px;
   color: var(--text-color);
   font-weight: 600;
 }
 
 .content-text :deep(p) {
-  margin-bottom: 6px;
+  margin-bottom: 12px;
   color: #4a5568;
 }
 
@@ -646,12 +667,13 @@ onMounted(() => {
 }
 
 .content-text :deep(ul) {
-  margin-bottom: 8px;
-  padding-left: 20px;
+  margin-bottom: 16px;
+  padding-left: 24px;
+  line-height: 1.8;
 }
 
 .content-text :deep(li) {
-  margin-bottom: 2px;
+  margin-bottom: 8px;
   position: relative;
 }
 
@@ -660,7 +682,7 @@ onMounted(() => {
   padding: 2px 6px;
   border-radius: 4px;
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 0.9em;
+  font-size: 13px;
   color: var(--primary-color);
   margin: 0 2px;
 }
@@ -716,8 +738,8 @@ onMounted(() => {
 
 .code-example code {
   font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
-  font-size: 11px;
-  line-height: 1.35;
+  font-size: 13px;
+  line-height: 1.6;
   background: transparent;
 }
 
