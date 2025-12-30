@@ -1,7 +1,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute } from 'vue-router'
-import { mainCategories, toolCategories, patternCategories } from '../../data/categories.js'
+import { toolCategories } from '../../data/categories.js'
 import { tools } from '../../data/tools.js'
 
 const route = useRoute()
@@ -24,24 +24,6 @@ const breadcrumbs = computed(() => {
        const tool = tools.find(t => t.id === toolId)
        if (tool) crumbs.push({ name: tool.name, icon: tool.icon }) 
     }
-  } 
-  else if (path.startsWith('/patterns')) {
-    crumbs.push({ name: '设计模式', icon: '🏗️', to: '/patterns' })
-    const catId = route.query.category
-    if (catId && catId !== 'all') {
-       const cat = patternCategories.find(c => c.id === catId)
-       if (cat) crumbs.push({ name: cat.name, icon: cat.icon, to: `/patterns?category=${catId}` })
-    }
-  }
-  else if (path.startsWith('/tutorials/')) {
-    const catId = route.params.category
-    const cat = mainCategories.find(c => c.id === catId)
-    if (cat) crumbs.push({ name: cat.name, icon: cat.icon, to: `/tutorials/${catId}` })
-  }
-  else if (path.startsWith('/tutorial/')) {
-     // Ideally we should lookup tutorial name. 
-     // For now, static text or passing via route state/meta
-     crumbs.push({ name: '教程详情', icon: '📖' })
   }
 
   return crumbs

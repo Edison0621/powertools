@@ -1,55 +1,26 @@
 <script setup>
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
 import { useAppStore } from '../../stores/app'
 import { storeToRefs } from 'pinia'
-import { mainCategories, toolCategories, patternCategories, patternsByCategory } from '../../data/categories.js'
+import { mainCategories, toolCategories } from '../../data/categories.js'
 
 const route = useRoute()
 const store = useAppStore()
 const { isSidebarOpen } = storeToRefs(store)
 
-const expandedPatternCategory = ref(null)
-
-// Watch for route changes to expand categories
-watch(
-  () => route.query.category,
-  (newCategory) => {
-    if (newCategory && newCategory !== 'all' && route.path.startsWith('/patterns')) {
-      expandedPatternCategory.value = newCategory
-    }
-  },
-  { immediate: true }
-)
-
 const activeMainCategory = computed(() => {
   if (route.path === '/') return 'home'
   if (route.path.startsWith('/tools') || route.path.startsWith('/tool/')) return 'powertools'
-  if (route.path.startsWith('/patterns')) return 'design-pattern'
-  if (route.path.startsWith('/tutorials/')) return route.params.category
-  // Handle tutorial detail page if possible, or just highlight generic 'home' or specific category if known
-  // If we are at /tutorial/:id, we might not know the category easily without looking it up.
-  // For now, let's just leave it or try to find it.
   return 'home'
 })
 
 const activeToolCategory = computed(() => route.query.category || 'all')
-const activePatternCategory = computed(() => route.query.category || 'all')
-const activePatternId = computed(() => route.query.id)
-
-const togglePatternCategory = (catId) => {
-  if (expandedPatternCategory.value === catId) {
-    expandedPatternCategory.value = null
-  } else {
-    expandedPatternCategory.value = catId
-  }
-}
 
 const getCategoryLink = (id) => {
   if (id === 'home') return '/'
   if (id === 'powertools') return '/tools'
-  if (id === 'design-pattern') return '/patterns'
-  return `/tutorials/${id}`
+  return '/'
 }
 </script>
 
@@ -100,69 +71,6 @@ const getCategoryLink = (id) => {
                 <span class="sub-nav-count">({{ toolCat.count }})</span>
               </a>
             </router-link>
-          </div>
-
-          <!-- 设计模式的二级菜单 -->
-          <div v-if="category.id === 'design-pattern' && activeMainCategory === 'design-pattern'" class="sub-nav">
-            <div v-for="patternCat in patternCategories" :key="patternCat.id" class="sub-nav-group">
-              <!-- 二级分类按钮 -->
-              <template v-if="patternCat.id !== 'all'">
-                <button
-                  @click="togglePatternCategory(patternCat.id)"
-                  :class="['sub-nav-item', 'expandable', { 
-                    active: activePatternCategory === patternCat.id && expandedPatternCategory !== patternCat.id,
-                    expanded: expandedPatternCategory === patternCat.id 
-                  }]"
-                  :aria-label="`查看${patternCat.name}`"
-                >
-                  <span class="sub-nav-icon">{{ patternCat.icon }}</span>
-                  <span class="sub-nav-name">{{ patternCat.name }}</span>
-                  <span class="sub-nav-count">({{ patternCat.count }})</span>
-                  <span class="expand-icon">{{ expandedPatternCategory === patternCat.id ? '▼' : '▶' }}</span>
-                </button>
-              </template>
-              
-              <!-- 全部模式按钮（不可展开） -->
-              <router-link
-                v-else
-                :to="{ path: '/patterns' }"
-                custom
-                v-slot="{ navigate, href }"
-              >
-                <a
-                  :href="href"
-                  @click="navigate"
-                  :class="['sub-nav-item', { active: activePatternCategory === patternCat.id }]"
-                  :aria-label="`查看${patternCat.name}`"
-                >
-                  <span class="sub-nav-icon">{{ patternCat.icon }}</span>
-                  <span class="sub-nav-name">{{ patternCat.name }}</span>
-                  <span class="sub-nav-count">({{ patternCat.count }})</span>
-                </a>
-              </router-link>
-
-              <!-- 三级菜单：具体模式列表 -->
-              <div 
-                v-if="patternCat.id !== 'all' && expandedPatternCategory === patternCat.id" 
-                class="third-nav"
-              >
-                <router-link
-                  v-for="pattern in patternsByCategory[patternCat.id]"
-                  :key="pattern.id"
-                  :to="{ path: '/patterns', query: { category: patternCat.id, id: pattern.id } }"
-                  custom
-                  v-slot="{ navigate, href }"
-                >
-                  <a
-                    :href="href"
-                    @click="navigate"
-                    :class="['third-nav-item', { active: activePatternId === pattern.id }]"
-                  >
-                    <span class="third-nav-name">{{ pattern.name }}</span>
-                  </a>
-                </router-link>
-              </div>
-            </div>
           </div>
         </div>
       </nav>
