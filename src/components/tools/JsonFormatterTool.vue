@@ -315,7 +315,7 @@ const formatSize = (bytes) => {
 .tool-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
 }
 
 .status-bar {
@@ -323,7 +323,7 @@ const formatSize = (bytes) => {
   justify-content: space-between;
   align-items: center;
   gap: 16px;
-  padding: 12px 16px;
+  padding: 10px 16px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: 8px;
@@ -335,6 +335,7 @@ const formatSize = (bytes) => {
   align-items: center;
   gap: 8px;
   font-weight: 600;
+  font-size: 14px;
 }
 
 .status-indicator.valid {
@@ -346,15 +347,15 @@ const formatSize = (bytes) => {
 }
 
 .status-icon {
-  font-size: 18px;
+  font-size: 16px;
   font-weight: bold;
 }
 
 .json-stats {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   flex-wrap: wrap;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--text-secondary);
 }
 
@@ -362,7 +363,7 @@ const formatSize = (bytes) => {
   display: flex;
   align-items: center;
   gap: 4px;
-  padding: 4px 8px;
+  padding: 3px 8px;
   background: var(--card-bg);
   border-radius: 4px;
   cursor: help;
@@ -370,21 +371,21 @@ const formatSize = (bytes) => {
 
 .tool-controls {
   display: flex;
-  gap: 12px;
+  gap: 10px;
   flex-wrap: wrap;
 }
 
 .action-btn {
-  padding: 8px 16px;
+  padding: 6px 14px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
-  border-radius: 8px;
-  font-size: 14px;
+  border-radius: 6px;
+  font-size: 13px;
   font-weight: 600;
   cursor: pointer;
   color: var(--text-color);
   transition: all 0.2s;
-  height: 36px;
+  height: 32px;
 }
 
 .action-btn:hover:not(:disabled) {
@@ -411,11 +412,11 @@ const formatSize = (bytes) => {
 .error-message {
   background: #fee;
   color: #c33;
-  padding: 12px 16px;
-  border-radius: 8px;
+  padding: 10px 14px;
+  border-radius: 6px;
   border-left: 4px solid #c33;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.5;
 }
 
 .dark .error-message {
@@ -427,7 +428,7 @@ const formatSize = (bytes) => {
 .io-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  gap: 16px;
 }
 
 .io-section {
@@ -445,6 +446,7 @@ const formatSize = (bytes) => {
 .io-header label {
   font-weight: 600;
   color: var(--text-color);
+  font-size: 14px;
 }
 
 .validation-badge {
@@ -453,9 +455,9 @@ const formatSize = (bytes) => {
 }
 
 .badge {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  font-size: 11px;
   font-weight: 600;
 }
 
@@ -480,11 +482,11 @@ const formatSize = (bytes) => {
 }
 
 .copy-btn {
-  padding: 6px 12px;
+  padding: 4px 10px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
-  border-radius: 6px;
-  font-size: 13px;
+  border-radius: 4px;
+  font-size: 12px;
   cursor: pointer;
   color: var(--text-color);
   transition: all 0.2s;
@@ -501,14 +503,14 @@ const formatSize = (bytes) => {
 
 .io-textarea {
   width: 100%;
-  min-height: 400px;
-  padding: 16px;
+  min-height: 350px;
+  padding: 12px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 8px;
   font-family: 'Consolas', 'Monaco', monospace;
-  font-size: 14px;
-  line-height: 1.6;
+  font-size: 13px;
+  line-height: 1.5;
   color: var(--text-color);
   resize: vertical;
   outline: none;

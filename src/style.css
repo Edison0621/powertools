@@ -34,6 +34,49 @@ body {
   margin: 0 auto;
 }
 
+/* 自定义滚动条样式 */
+/* Webkit 浏览器（Chrome, Safari, Edge） */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.05);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a8d5ba 0%, #7fb69e 100%);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #7fb69e 0%, #6ba587 100%);
+  box-shadow: 0 0 4px rgba(127, 182, 158, 0.3);
+}
+
+/* 暗色模式下的滚动条 */
+.dark ::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #7fb69e 0%, #6ba587 100%);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6ba587 0%, #5a9475 100%);
+  box-shadow: 0 0 6px rgba(127, 182, 158, 0.4);
+}
+
+/* Firefox 滚动条样式 */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #a8d5ba rgba(0, 0, 0, 0.05);
+}
+
 @media (prefers-color-scheme: light) {
   :root {
     color: #213547;

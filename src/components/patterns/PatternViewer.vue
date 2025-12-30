@@ -56,7 +56,7 @@
                 {{ codeCopied ? '✓ 已复制' : '📋 复制代码' }}
               </button>
             </div>
-            <pre class="code-content" :data-language="selectedLanguage"><code v-html="highlightedCode"></code></pre>
+            <pre class="code-content" :data-language="selectedLanguage"><code class="hljs" v-html="highlightedCode"></code></pre>
           </div>
         </div>
 
@@ -76,6 +76,8 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { patterns, categories, languages } from '../../data/patterns.js'
 import { patternCodes } from '../../data/pattern-codes.js'
+import hljs from 'highlight.js';
+import 'highlight.js/styles/atom-one-dark.css';
 
 // Props
 const props = defineProps({
@@ -156,74 +158,17 @@ const highlightedCode = computed(() => {
   const code = currentCode.value
   if (!code) return ''
   
-  return highlightCode(code, selectedLanguage.value)
-})
-
-function highlightCode(code, lang) {
-  // HTML 转义
-  let highlighted = code
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-  
-  // 关键字高亮
-  const keywords = {
-    csharp: ['using', 'namespace', 'class', 'public', 'private', 'protected', 'static', 'readonly', 'sealed', 'abstract', 'interface', 'void', 'int', 'string', 'bool', 'var', 'new', 'return', 'if', 'else', 'for', 'foreach', 'while', 'switch', 'case', 'break', 'continue', 'try', 'catch', 'finally', 'throw', 'get', 'set', 'override', 'virtual', 'async', 'await', 'lock', 'this', 'base', 'null', 'true', 'false'],
-    java: ['package', 'import', 'class', 'public', 'private', 'protected', 'static', 'final', 'abstract', 'interface', 'implements', 'extends', 'void', 'int', 'String', 'boolean', 'new', 'return', 'if', 'else', 'for', 'while', 'switch', 'case', 'break', 'continue', 'try', 'catch', 'finally', 'throw', 'throws', 'this', 'super', 'null', 'true', 'false', 'synchronized', 'volatile', 'enum'],
-    go: ['package', 'import', 'func', 'type', 'struct', 'interface', 'var', 'const', 'return', 'if', 'else', 'for', 'range', 'switch', 'case', 'break', 'continue', 'defer', 'go', 'chan', 'select', 'map', 'nil', 'true', 'false', 'make', 'new', 'len', 'cap', 'append', 'copy', 'delete'],
-    rust: ['use', 'mod', 'fn', 'pub', 'struct', 'enum', 'trait', 'impl', 'let', 'mut', 'const', 'static', 'return', 'if', 'else', 'for', 'while', 'loop', 'match', 'break', 'continue', 'self', 'Self', 'true', 'false', 'unsafe', 'async', 'await', 'move', 'ref', 'Box', 'Option', 'Result', 'Some', 'None', 'Ok', 'Err']
-  }
-  
-  const langKeywords = keywords[lang] || keywords.csharp
-  
-  // 标记需要保护的内容
-  const protectedRanges = []
-  
-  // 1. 注释高亮（单行 // 和多行 /* */）
-  const commentRegex = /(\/\/[^\n]*)|((\/\*[\s\S]*?\*\/))/g
-  let match
-  while ((match = commentRegex.exec(highlighted)) !== null) {
-    const start = match.index
-    const end = start + match[0].length
-    protectedRanges.push({ start, end, replacement: `<span class="comment">${match[0]}</span>` })
-  }
-  
-  // 2. 字符串高亮
-  const stringRegex = /"(?:[^"\\]|\\.)*"/g
-  while ((match = stringRegex.exec(highlighted)) !== null) {
-    const start = match.index
-    const end = start + match[0].length
-    // 检查是否在保护区域内
-    if (!protectedRanges.some(r => start >= r.start && end <= r.end)) {
-      protectedRanges.push({ start, end, replacement: `<span class="string">${match[0]}</span>` })
+  const lang = selectedLanguage.value
+  if (hljs.getLanguage(lang)) {
+    try {
+      return hljs.highlight(code, { language: lang }).value
+    } catch (e) {
+      console.warn('Highlight error:', e)
+      return hljs.highlightAuto(code).value
     }
   }
-  
-  // 按位置排序
-  protectedRanges.sort((a, b) => b.start - a.start)
-  
-  // 从后向前替换，避免位置偏移
-  protectedRanges.forEach(range => {
-    highlighted = highlighted.substring(0, range.start) + range.replacement + highlighted.substring(range.end)
-  })
-  
-  // 3. 数字高亮（不在保护区域内）
-  highlighted = highlighted.replace(/\b(\d+)\b(?![^<]*>)/g, '<span class="number">$1</span>')
-  
-  // 4. 关键字高亮（不在保护区域内）
-  langKeywords.forEach(keyword => {
-    const regex = new RegExp(`\\b(${keyword})\\b(?![^<]*>)`, 'g')
-    highlighted = highlighted.replace(regex, '<span class="keyword">$1</span>')
-  })
-  
-  // 5. 类型高亮（大写开头的单词，不在标签内）
-  highlighted = highlighted.replace(/\b([A-Z][a-zA-Z0-9_]*)\b(?![^<]*>)/g, '<span class="type">$1</span>')
-  
-  // 6. 函数调用高亮（不在标签内）
-  highlighted = highlighted.replace(/\b([a-zA-Z_][a-zA-Z0-9_]*)(?=\s*\()(?![^<]*>)/g, '<span class="function">$1</span>')
-  
-  return highlighted
-}
+  return hljs.highlightAuto(code).value
+})
 
 // 方法
 const selectPattern = (pattern) => {
@@ -296,7 +241,7 @@ onMounted(() => {
   margin: 0;
   height: 100%;
   background: var(--card-bg);
-  border-radius: 16px;
+  border-radius: 12px;
   border: 1px solid var(--border-color);
   overflow: hidden;
   box-shadow: var(--shadow);
@@ -306,7 +251,7 @@ onMounted(() => {
   display: flex;
   gap: 0;
   height: 100%;
-  min-height: 600px;
+  min-height: 500px;
 }
 
 /* 代码展示区域 */
@@ -328,7 +273,7 @@ onMounted(() => {
 }
 
 .pattern-info-wrapper {
-  max-height: 280px;
+  max-height: 220px;
   overflow-y: auto;
   overflow-x: hidden;
   flex-shrink: 0;
@@ -336,7 +281,7 @@ onMounted(() => {
   border-bottom: 1px solid #e0e0e0;
   position: relative;
   /* 添加渐变阴影提示有内容可滚动 */
-  box-shadow: inset 0 -30px 20px -20px rgba(52, 152, 219, 0.15);
+  box-shadow: inset 0 -20px 15px -15px rgba(52, 152, 219, 0.1);
 }
 
 /* 滚动提示指示器 */
@@ -345,15 +290,15 @@ onMounted(() => {
   bottom: 0;
   left: 0;
   right: 0;
-  height: 60px;
+  height: 40px;
   background: linear-gradient(to bottom, 
     rgba(255, 255, 255, 0) 0%, 
-    rgba(255, 255, 255, 0.8) 30%,
-    rgba(255, 255, 255, 0.95) 100%);
+    rgba(255, 255, 255, 0.9) 40%,
+    rgba(255, 255, 255, 0.98) 100%);
   display: flex;
   align-items: flex-end;
   justify-content: center;
-  padding-bottom: 10px;
+  padding-bottom: 6px;
   pointer-events: none;
   animation: scrollHintPulse 2s ease-in-out infinite;
   z-index: 10;
@@ -362,20 +307,20 @@ onMounted(() => {
 .scroll-hint-content {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
   color: white;
-  padding: 8px 20px;
-  border-radius: 20px;
-  font-size: 14px;
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 12px;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(52, 152, 219, 0.4);
+  box-shadow: 0 2px 8px rgba(52, 152, 219, 0.3);
   pointer-events: auto;
   cursor: pointer;
 }
 
 .scroll-icon {
-  font-size: 18px;
+  font-size: 14px;
   animation: scrollArrowBounce 1.5s ease-in-out infinite;
 }
 
@@ -397,7 +342,7 @@ onMounted(() => {
     transform: translateY(0);
   }
   50% {
-    transform: translateY(4px);
+    transform: translateY(3px);
   }
 }
 
@@ -409,8 +354,8 @@ onMounted(() => {
 
 .pattern-info h2 {
   margin: 0;
-  padding: 24px 24px 16px;
-  font-size: 28px;
+  padding: 16px 20px 12px;
+  font-size: 24px;
   color: #1a1a1a;
   font-weight: 700;
   background: white;
@@ -418,24 +363,24 @@ onMounted(() => {
 }
 
 .pattern-info h2 .pattern-name-en {
-  font-size: 16px;
+  font-size: 14px;
   color: #95a5a6;
   font-weight: 400;
-  margin-left: 12px;
+  margin-left: 10px;
 }
 
 .pattern-desc {
   margin: 0;
-  padding: 20px 24px;
-  font-size: 16px;
+  padding: 16px 20px;
+  font-size: 14px;
   color: #555;
-  line-height: 1.8;
+  line-height: 1.6;
   background: #f8f9fa;
   border-left: 4px solid #e74c3c;
 }
 
 .info-section {
-  padding: 20px 24px;
+  padding: 12px 20px;
   border-bottom: 1px solid #ecf0f1;
 }
 
@@ -444,27 +389,27 @@ onMounted(() => {
 }
 
 .section-label {
-  font-size: 15px;
+  font-size: 14px;
   font-weight: 600;
   color: #2c3e50;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   gap: 6px;
 }
 
 .section-content {
-  font-size: 14px;
+  font-size: 13px;
   color: #34495e;
-  line-height: 1.7;
+  line-height: 1.6;
   text-align: left;
   padding-left: 0;
 }
 
 .applicability-item {
   display: flex;
-  gap: 10px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-bottom: 6px;
   align-items: flex-start;
 }
 
@@ -475,8 +420,8 @@ onMounted(() => {
 .applicability-item .bullet {
   color: #3498db;
   font-weight: bold;
-  font-size: 18px;
-  line-height: 1.7;
+  font-size: 16px;
+  line-height: 1.6;
   flex-shrink: 0;
 }
 
@@ -487,23 +432,23 @@ onMounted(() => {
 
 .language-tabs {
   display: flex;
-  gap: 4px;
-  padding: 16px 24px 0;
+  gap: 2px;
+  padding: 12px 20px 0;
   background: #f8f9fa;
   flex-shrink: 0;
   border-top: 1px solid #e0e0e0;
 }
 
 .lang-tab {
-  padding: 10px 20px;
+  padding: 8px 16px;
   background: white;
-  border-radius: 8px 8px 0 0;
+  border-radius: 6px 6px 0 0;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
   align-items: center;
   gap: 6px;
-  border: 2px solid transparent;
+  border: 1px solid transparent;
   border-bottom: none;
 }
 
@@ -512,24 +457,24 @@ onMounted(() => {
 }
 
 .lang-tab.active {
-  background: #2c3e50;
+  background: #282c34;
   color: white;
-  border-color: #2c3e50;
+  border-color: #282c34;
 }
 
 .lang-icon {
-  font-size: 18px;
+  font-size: 16px;
 }
 
 .lang-name {
   font-weight: 600;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .code-display {
   flex: 1;
   background: #f8f9fa;
-  padding: 0 24px 24px;
+  padding: 0 20px 20px;
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -540,30 +485,30 @@ onMounted(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px;
-  background: #2c3e50;
+  padding: 10px 16px;
+  background: #282c34;
   border-radius: 8px 8px 0 0;
   color: white;
 }
 
 .file-name {
   font-family: 'Consolas', 'Monaco', monospace;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .copy-btn {
-  padding: 6px 16px;
-  background: #3498db;
+  padding: 4px 12px;
+  background: rgba(255, 255, 255, 0.1);
   color: white;
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  font-size: 13px;
+  font-size: 12px;
   transition: all 0.2s;
 }
 
 .copy-btn:hover {
-  background: #2980b9;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .copy-btn.copied {
@@ -573,12 +518,12 @@ onMounted(() => {
 .code-content {
   flex: 1;
   margin: 0;
-  padding: 20px;
-  background: #1e1e1e;
-  color: #d4d4d4;
-  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-  font-size: 14px;
-  line-height: 1.6;
+  padding: 16px;
+  background: #282c34;
+  color: #abb2bf;
+  font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+  font-size: 13px;
+  line-height: 1.5;
   overflow: auto;
   border-radius: 0 0 8px 8px;
   text-align: left;
@@ -588,33 +533,7 @@ onMounted(() => {
 
 .code-content code {
   font-family: inherit;
-}
-
-/* 语法高亮颜色 */
-.code-content :deep(.keyword) {
-  color: #569cd6; /* 蓝色 - 关键字 */
-  font-weight: 500;
-}
-
-.code-content :deep(.string) {
-  color: #ce9178; /* 橙色 - 字符串 */
-}
-
-.code-content :deep(.comment) {
-  color: #6a9955; /* 绿色 - 注释 */
-  font-style: italic;
-}
-
-.code-content :deep(.number) {
-  color: #b5cea8; /* 浅绿色 - 数字 */
-}
-
-.code-content :deep(.function) {
-  color: #dcdcaa; /* 黄色 - 函数 */
-}
-
-.code-content :deep(.type) {
-  color: #4ec9b0; /* 青色 - 类型 */
+  background: transparent;
 }
 
 /* 空状态 */
@@ -629,28 +548,28 @@ onMounted(() => {
 }
 
 .empty-icon {
-  font-size: 80px;
-  margin-bottom: 20px;
+  font-size: 64px;
+  margin-bottom: 16px;
 }
 
 .empty-state h3 {
-  font-size: 24px;
-  margin-bottom: 12px;
+  font-size: 20px;
+  margin-bottom: 8px;
   color: #2c3e50;
 }
 
 .empty-state p {
-  font-size: 15px;
+  font-size: 14px;
   color: #7f8c8d;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .empty-hint {
-  font-size: 14px;
+  font-size: 13px;
   color: #3498db;
   background: #e8f4f8;
-  padding: 10px 20px;
-  border-radius: 20px;
+  padding: 8px 16px;
+  border-radius: 16px;
   font-weight: 500;
 }
 
@@ -658,23 +577,23 @@ onMounted(() => {
 .pattern-list::-webkit-scrollbar,
 .code-content::-webkit-scrollbar,
 .pattern-info-wrapper::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 .pattern-list::-webkit-scrollbar-track,
 .code-content::-webkit-scrollbar-track,
 .pattern-info-wrapper::-webkit-scrollbar-track {
   background: #ecf0f1;
-  border-radius: 5px;
+  border-radius: 4px;
 }
 
 .pattern-list::-webkit-scrollbar-thumb,
 .code-content::-webkit-scrollbar-thumb,
 .pattern-info-wrapper::-webkit-scrollbar-thumb {
   background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
-  border-radius: 5px;
-  border: 2px solid #ecf0f1;
+  border-radius: 4px;
+  border: 1px solid #ecf0f1;
 }
 
 .pattern-list::-webkit-scrollbar-thumb:hover,
@@ -692,29 +611,29 @@ onMounted(() => {
 
   .pattern-list {
     width: 100%;
-    max-height: 400px;
+    max-height: 300px;
   }
 
   .code-area {
-    min-height: 500px;
+    min-height: 400px;
   }
 
   .header h1 {
-    font-size: 24px;
+    font-size: 20px;
   }
   
   .scroll-hint {
-    height: 50px;
-    padding-bottom: 8px;
+    height: 40px;
+    padding-bottom: 6px;
   }
   
   .scroll-hint-content {
-    padding: 6px 16px;
-    font-size: 13px;
+    padding: 4px 12px;
+    font-size: 12px;
   }
   
   .scroll-icon {
-    font-size: 16px;
+    font-size: 14px;
   }
 }
 </style>

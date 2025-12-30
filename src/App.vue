@@ -9,6 +9,10 @@ import { patterns } from './data/patterns.js'
 import { htmlTutorial } from './data/tutorials/html-tutorial.js'
 import { cssTutorial } from './data/tutorials/css-tutorial.js'
 import { javascriptTutorial } from './data/tutorials/javascript-tutorial.js'
+import { vueTutorial } from './data/tutorials/vue-tutorial.js'
+import { typescriptTutorial } from './data/tutorials/typescript-tutorial.js'
+import { reactTutorial } from './data/tutorials/react-tutorial.js'
+import { angularTutorial } from './data/tutorials/angular-tutorial.js'
 
 const isDark = ref(false)
 const searchQuery = ref('')
@@ -27,18 +31,25 @@ const tutorialDataMap = {
   'html': htmlTutorial,
   'css': cssTutorial,
   'javascript': javascriptTutorial,
+  'vue': vueTutorial,
+  'typescript': typescriptTutorial,
+  'react': reactTutorial,
+  'angular': angularTutorial,
   // 后续添加其他教程
 }
 
 // 主导航分类
 const mainCategories = [
   { id: 'home', name: '首页', icon: '🏠', description: '欢迎来到在线教程平台' },
-  { id: 'frontend', name: '前端开发', icon: '🎨', description: 'HTML, CSS, JavaScript等' },
-  { id: 'backend', name: '后端开发', icon: '⚙️', description: 'Java, Python, Go, Node.js' },
-  { id: 'database', name: '数据库', icon: '💾', description: 'MySQL, Redis, MongoDB' },
-  { id: 'mobile', name: '移动开发', icon: '📱', description: 'Android, iOS, Flutter' },
-  { id: 'devops', name: '运维开发', icon: '🛠️', description: 'Docker, K8s, CI/CD' },
   { id: 'ai', name: '人工智能', icon: '🤖', description: '机器学习, 深度学习' },
+  { id: 'frontend', name: '前端开发', icon: '🎨', description: 'HTML, CSS, JavaScript等' },
+  { id: 'language', name: '编程语言', icon: '💻', description: 'Java, Python, Go, C++等' },
+  { id: 'database', name: '数据库', icon: '💾', description: 'MySQL, PostgreSQL, MongoDB' },
+  { id: 'mobile', name: '移动开发', icon: '📱', description: 'Android, iOS, Flutter' },
+  { id: 'middleware', name: '中间件', icon: '🔌', description: 'Redis, Kafka, RabbitMQ等' },
+  { id: 'devops', name: '运维开发', icon: '🛠️', description: 'Docker, K8s, CI/CD' },
+  { id: 'algorithm', name: '算法', icon: '🧮', description: '排序, 查找, 动态规划等' },
+  { id: 'data-structure', name: '数据结构', icon: '🗂️', description: '数组, 链表, 树, 图等' },
   { id: 'design-pattern', name: '设计模式', icon: '🏗️', description: '23种设计模式详解' },
   { id: 'powertools', name: '开发工具', icon: '⚡', description: '在线工具集合' }
 ]
@@ -117,6 +128,15 @@ const tutorials = [
     level: '中级'
   },
   {
+    id: 'typescript',
+    name: 'TypeScript 教程',
+    category: 'frontend',
+    icon: '📜',
+    color: '#3178C6',
+    description: 'JavaScript 超集，类型安全，企业级',
+    level: '中级'
+  },
+  {
     id: 'vue',
     name: 'Vue.js 教程',
     category: 'frontend',
@@ -134,8 +154,25 @@ const tutorials = [
     description: '用于构建用户界面的 JS 库',
     level: '中级'
   },
-  
+    {
+    id: 'angular',
+    name: 'Angular 教程',
+    category: 'frontend',
+    icon: '📚',
+    color: '#DD0031',
+    description: 'TypeScript 框架，企业级应用开发',
+    level: '中级'
+  },
   // 后端开发
+   {
+    id: 'csharp',
+    name: 'C#  教程',
+    category: 'backend',
+    icon: '☕',
+    color: '#007396',
+    description: '面向对象编程语言',
+    level: '中级'
+  },
   {
     id: 'java',
     name: 'Java 教程',
@@ -164,6 +201,15 @@ const tutorials = [
     level: '中级'
   },
   {
+    id: 'rust',
+    name: 'Rust 教程',
+    category: 'language',
+    icon: '🦀',
+    color: '#CE422B',
+    description: '系统级编程，内存安全，无GC',
+    level: '高级'
+  },
+  {
     id: 'nodejs',
     name: 'Node.js 教程',
     category: 'backend',
@@ -182,6 +228,33 @@ const tutorials = [
     color: '#4479A1',
     description: '最流行的关系型数据库',
     level: '中级'
+  },
+  {
+    id: 'mssql',
+    name: 'SQL Server 教程',
+    category: 'database',
+    icon: '💾',
+    color: '#CC2927',
+    description: 'Microsoft 关系型数据库，企业级',
+    level: '中级'
+  },
+ {
+    id: 'postgresql',
+    name: 'PostgreSQL 教程',
+    category: 'database',
+    icon: '🐘',
+    color: '#336791',
+    description: '先进开源数据库，ACID支持，JSON',
+    level: '中级'
+  },
+  {
+    id: 'doris',
+    name: 'Doris 教程',
+    category: 'database',
+    icon: '⚡',
+    color: '#FF6600',
+    description: 'MPP 分析型数据库，实时OLAP',
+    level: '高级'
   },
   {
     id: 'redis',
