@@ -1141,7 +1141,7 @@ body {
 }
 
 .nav-icon {
-  font-size: 20px;
+  font-size: 22px;
   flex-shrink: 0;
 }
 
@@ -1151,7 +1151,7 @@ body {
 }
 
 .nav-name {
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 600;
   margin-bottom: 2px;
   white-space: nowrap;
@@ -1160,7 +1160,7 @@ body {
 }
 
 .nav-desc {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-secondary);
   line-height: 1.4;
   white-space: nowrap;
@@ -1204,7 +1204,7 @@ body {
   transition: all 0.2s;
   text-align: left;
   width: 100%;
-  font-size: 13px;
+  font-size: 14px;
   color: var(--text-color);
 }
 
@@ -1251,7 +1251,7 @@ body {
 }
 
 .sub-nav-count {
-  font-size: 11px;
+  font-size: 12px;
   opacity: 0.7;
   margin-left: auto;
 }
@@ -1275,7 +1275,7 @@ body {
   cursor: pointer;
   transition: all 0.2s;
   text-align: left;
-  font-size: 12px;
+  font-size: 13px;
   color: var(--text-color);
   margin-bottom: 4px;
 }
