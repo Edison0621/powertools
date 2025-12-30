@@ -278,24 +278,28 @@ const hotTools = [
 // 精选评测与资讯
 const news = [
   {
+    id: 1,
     title: 'ChatGPT vs Claude：哪个更适合你的工作场景？',
     date: '2小时前',
     tag: '深度评测',
     views: '8.2K'
   },
   {
+    id: 2,
     title: 'Midjourney V6 深度测评：图像质量提升有多大？',
     date: '1天前',
     tag: '工具评测',
     views: '12.5K'
   },
   {
+    id: 3,
     title: '5款AI视频工具横向对比：谁才是真正的王者',
     date: '2天前',
     tag: '横向对比',
     views: '6.8K'
   },
   {
+    id: 4,
     title: 'AI编程助手选购指南：从免费到付费全解析',
     date: '3天前',
     tag: '选购指南',
@@ -303,11 +307,30 @@ const news = [
   }
 ]
 
+// 跳转到文章详情
+const goToArticle = (articleId) => {
+  router.push(`/article/${articleId}`)
+}
+
 // 当前选中的分类
 const selectedCategory = ref(null)
 
 const selectCategory = (category) => {
-  selectedCategory.value = selectedCategory.value?.id === category.id ? null : category
+  // 跳转到分类详情页
+  const categoryIdMap = {
+    'AI 绘画': 'ai-painting',
+    'AI 写作': 'ai-writing',
+    'AI 视频': 'ai-video',
+    'AI 音频': 'ai-audio',
+    'AI 编程': 'ai-coding',
+    'AI 数据': 'ai-data',
+    'AI 教育': 'ai-education',
+    'AI 营销': 'ai-marketing'
+  }
+  const categoryId = categoryIdMap[category.name]
+  if (categoryId) {
+    router.push(`/category/${categoryId}`)
+  }
 }
 
 // 工具详情跳转
@@ -421,33 +444,57 @@ const goToFeaturedTools = () => {
     <!-- Categories - AI 工具分类 -->
     <section class="categories-section">
       <div class="section-header">
-        <h2 class="section-title">🎯 8大核心分类</h2>
-        <p class="section-desc">精选每个分类的TOP工具，不追求数量，只追求质量</p>
+        <div class="header-top">
+          <span class="section-badge">
+            <span class="badge-icon">🎯</span>
+            <span>核心分类</span>
+          </span>
+        </div>
+        <h2 class="section-title-large">
+          <span class="title-main">8大核心分类</span>
+        </h2>
+        <p class="section-desc-large">精选每个分类的TOP工具，不追求数量，只追求质量</p>
       </div>
       
-      <div class="categories-grid">
+      <div class="categories-grid-modern">
         <div 
           v-for="category in aiCategories" 
           :key="category.id"
-          class="category-card"
-          :class="{ active: selectedCategory?.id === category.id, hot: category.hot }"
+          class="category-card-modern"
+          :class="{ hot: category.hot }"
           @click="selectCategory(category)"
         >
-          <div class="category-bg" :style="{ background: category.color }"></div>
-          <div class="category-content">
-            <div class="category-icon">{{ category.icon }}</div>
-            <h3 class="category-name">{{ category.name }}</h3>
-            <p class="category-desc">{{ category.desc }}</p>
-            <div class="category-tools">
+          <!-- 渐变背景层 -->
+          <div class="card-gradient" :style="{ background: category.color }"></div>
+          
+          <!-- HOT 标签 -->
+          <div v-if="category.hot" class="hot-label">
+            <span class="hot-icon">🔥</span>
+            <span>HOT</span>
+          </div>
+          
+          <!-- 卡片内容 -->
+          <div class="card-body">
+            <div class="category-icon-modern">{{ category.icon }}</div>
+            <h3 class="category-title">{{ category.name }}</h3>
+            <p class="category-description">{{ category.desc }}</p>
+            
+            <!-- 工具标签 -->
+            <div class="tools-tags">
               <span 
                 v-for="(tool, idx) in category.tools" 
                 :key="idx"
-                class="tool-tag-small"
+                class="tool-badge"
               >
                 {{ tool }}
               </span>
             </div>
-            <div v-if="category.hot" class="hot-badge">🔥 HOT</div>
+            
+            <!-- 查看按钮 -->
+            <button class="explore-btn">
+              <span>探索分类</span>
+              <span class="btn-arrow">→</span>
+            </button>
           </div>
         </div>
       </div>
@@ -465,6 +512,7 @@ const goToFeaturedTools = () => {
           v-for="(item, idx) in news" 
           :key="idx"
           class="news-card"
+          @click="goToArticle(item.id)"
         >
           <div class="news-header">
             <span class="news-tag" :class="item.tag">#{{ item.tag }}</span>
@@ -904,98 +952,238 @@ section {
 }
 
 /* ==== Categories Section ==== */
-.categories-grid {
+.categories-section {
+  background: linear-gradient(180deg, #f8f9fa 0%, #ffffff 100%);
+  padding: 80px 40px;
+  margin-bottom: 0;
+}
+
+.section-header .header-top {
+  margin-bottom: 16px;
+}
+
+.section-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 24px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border-radius: 30px;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.section-title-large {
+  font-size: 52px;
+  font-weight: 900;
+  color: var(--text-color);
+  margin-bottom: 20px;
+  letter-spacing: -2px;
+  line-height: 1.2;
+}
+
+.title-main {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.section-desc-large {
+  font-size: 19px;
+  color: var(--text-secondary);
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.categories-grid-modern {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 28px;
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.category-card {
-  background: var(--card-bg);
-  border-radius: 16px;
-  padding: 0;
-  border: 2px solid var(--border-color);
-  cursor: pointer;
-  transition: all 0.3s;
-  position: relative;
+.category-card-modern {
+  background: white;
+  border-radius: 24px;
   overflow: hidden;
-  height: 280px;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  border: 2px solid #e5e7eb;
+  height: 100%;
 }
 
-.category-bg {
+.category-card-modern:hover {
+  transform: translateY(-12px) scale(1.02);
+  border-color: transparent;
+  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.15);
+}
+
+/* 渐变背景层 */
+.card-gradient {
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
-  height: 120px;
-  opacity: 0.9;
-  transition: all 0.3s;
-}
-
-.category-card:hover .category-bg {
-  height: 100%;
+  height: 140px;
   opacity: 1;
+  transition: all 0.4s ease;
 }
 
-.category-content {
-  position: relative;
-  z-index: 1;
-  padding: 32px;
-  color: var(--text-color);
-  transition: color 0.3s;
+.category-card-modern:hover .card-gradient {
+  height: 100%;
+  opacity: 0.95;
 }
 
-.category-card:hover .category-content {
-  color: white;
-}
-
-.category-icon {
-  font-size: 48px;
-  margin-bottom: 16px;
-}
-
-.category-name {
-  font-size: 22px;
-  font-weight: 700;
-  margin-bottom: 8px;
-}
-
-.category-desc {
-  font-size: 14px;
-  opacity: 0.9;
-  margin-bottom: 16px;
-}
-
-.category-tools {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.tool-tag-small {
-  padding: 4px 12px;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  font-size: 12px;
-  font-weight: 600;
-}
-
-.hot-badge {
+/* HOT 标签 */
+.hot-label {
   position: absolute;
   top: 16px;
   right: 16px;
-  background: rgba(255, 59, 48, 0.9);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(255, 59, 48, 0.95);
+  backdrop-filter: blur(10px);
   color: white;
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-size: 12px;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 13px;
   font-weight: 700;
+  z-index: 10;
+  box-shadow: 0 4px 12px rgba(255, 59, 48, 0.4);
+  animation: pulse 2s infinite;
 }
 
-.category-card.active {
-  transform: scale(1.02);
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+}
+
+.hot-icon {
+  font-size: 16px;
+  animation: fire 1.5s infinite;
+}
+
+/* 卡片内容 */
+.card-body {
+  position: relative;
+  z-index: 2;
+  padding: 32px 24px 28px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.category-card-modern:hover .card-body {
+  color: white;
+}
+
+.category-icon-modern {
+  font-size: 60px;
+  margin-bottom: 20px;
+  transition: all 0.4s;
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
+}
+
+.category-card-modern:hover .category-icon-modern {
+  transform: scale(1.1) translateY(-4px);
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+}
+
+.category-title {
+  font-size: 24px;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: var(--text-color);
+  transition: color 0.3s;
+  letter-spacing: -0.5px;
+}
+
+.category-card-modern:hover .category-title {
+  color: white;
+}
+
+.category-description {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.6;
+  transition: color 0.3s;
+  opacity: 0.9;
+}
+
+.category-card-modern:hover .category-description {
+  color: rgba(255, 255, 255, 0.95);
+}
+
+/* 工具标签 */
+.tools-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-grow: 1;
+}
+
+.tool-badge {
+  padding: 6px 14px;
+  background: rgba(102, 126, 234, 0.1);
+  color: #667eea;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: all 0.3s;
+  border: 1px solid rgba(102, 126, 234, 0.2);
+}
+
+.category-card-modern:hover .tool-badge {
+  background: rgba(255, 255, 255, 0.25);
+  color: white;
+  border-color: rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(10px);
+}
+
+/* 探索按钮 */
+.explore-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 14px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+  margin-top: auto;
+}
+
+.category-card-modern:hover .explore-btn {
+  background: white;
+  color: #667eea;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+
+.btn-arrow {
+  font-size: 18px;
+  transition: transform 0.3s;
+}
+
+.explore-btn:hover .btn-arrow {
+  transform: translateX(4px);
 }
 
 /* ==== News Section ==== */
@@ -1205,11 +1393,23 @@ section {
   .hot-tools-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+
+  .categories-grid-modern {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }
 
 @media (max-width: 1200px) {
   .hot-tools-grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  .categories-grid-modern {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .section-title-large {
+    font-size: 42px;
   }
 }
 
@@ -1243,11 +1443,27 @@ section {
     font-size: 32px;
   }
 
+  .section-title-large {
+    font-size: 32px;
+  }
+
+  .section-desc-large {
+    font-size: 16px;
+  }
+
+  .categories-section {
+    padding: 60px 20px;
+  }
+
   .hot-tools-grid {
     grid-template-columns: 1fr;
   }
 
-  .categories-grid,
+  .categories-grid-modern {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
   .news-grid {
     grid-template-columns: 1fr;
   }
