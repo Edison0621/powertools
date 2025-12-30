@@ -3,23 +3,18 @@ import { useAppStore } from '../../stores/app'
 import { storeToRefs } from 'pinia'
 
 const store = useAppStore()
-const { isDark, isSidebarOpen, searchQuery } = storeToRefs(store)
-const { toggleSidebar, toggleTheme } = store
+const { isDark, searchQuery } = storeToRefs(store)
+const { toggleTheme } = store
 </script>
 
 <template>
   <header class="header" role="banner">
     <div class="header-container">
       <div class="header-content">
-        <!-- 汉堡包菜单 -->
-        <button class="menu-toggle" @click="toggleSidebar" aria-label="切换菜单">
-          <span class="menu-icon">{{ isSidebarOpen ? '✕' : '☰' }}</span>
-        </button>
-        
         <router-link to="/" class="logo">
-          <span class="logo-icon" aria-hidden="true">🤖</span>
-          <h1>AI追梦者</h1>
-          <span class="tagline">在线教程库</span>
+          <span class="logo-icon" aria-hidden="true">✨</span>
+          <h1>AI工具箱</h1>
+          <span class="tagline">发现最好的AI工具</span>
         </router-link>
         
         <div class="header-right">
@@ -71,22 +66,6 @@ const { toggleSidebar, toggleTheme } = store
   align-items: center;
   gap: 20px;
   height: var(--header-height);
-}
-
-.menu-toggle {
-  display: none;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: var(--text-color);
-  padding: 8px;
-  border-radius: 4px;
-  transition: background 0.2s;
-}
-
-.menu-toggle:hover {
-  background: var(--bg-color);
 }
 
 .logo {
@@ -180,9 +159,6 @@ const { toggleSidebar, toggleTheme } = store
 }
 
 @media (max-width: 768px) {
-  .menu-toggle {
-    display: block;
-  }
   .header-content {
     gap: 12px;
   }

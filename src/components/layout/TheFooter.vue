@@ -34,6 +34,10 @@
       
       <div class="footer-bottom">
         <p>&copy; 2025 AI追梦者. All rights reserved.</p>
+        <p class="contact-email">
+          <span class="email-label">联系邮箱：</span>
+          <a href="mailto:shcnmxx@163.com" class="email-link">shcnmxx@163.com</a>
+        </p>
       </div>
     </div>
   </footer>
@@ -122,6 +126,34 @@
   border-top: 1px solid var(--border-color);
   color: var(--text-secondary);
   font-size: 13px;
+}
+
+.footer-bottom p {
+  margin: 8px 0;
+}
+
+.contact-email {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 12px;
+}
+
+.email-label {
+  color: var(--text-secondary);
+}
+
+.email-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.email-link:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
 }
 
 @media (max-width: 1024px) {

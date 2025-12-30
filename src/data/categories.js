@@ -1,8 +1,8 @@
 import { tools } from './tools.js'
 
 export const mainCategories = [
-  { id: 'home', name: '首页', icon: '🏠', description: '欢迎来到 AI 学习平台' },
-  { id: 'powertools', name: '开发工具', icon: '⚡', description: '在线工具集合' }
+  { id: 'home', name: '首页', icon: '🏠', description: '精选高质量AI工具推荐' },
+  { id: 'powertools', name: '开发工具', icon: '⚡', description: '程序员必备的在线工具' }
 ]
 
 export const toolCategories = [

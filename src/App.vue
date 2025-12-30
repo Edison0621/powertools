@@ -2,7 +2,6 @@
 import { onMounted } from 'vue'
 import { useAppStore } from './stores/app'
 import TheHeader from './components/layout/TheHeader.vue'
-import TheSidebar from './components/layout/TheSidebar.vue'
 import TheFooter from './components/layout/TheFooter.vue'
 import AppBreadcrumb from './components/common/AppBreadcrumb.vue'
 
@@ -17,7 +16,6 @@ onMounted(() => {
   <div class="app" :class="{ dark: store.isDark }">
     <TheHeader />
     <div class="layout">
-      <TheSidebar />
       <main class="main-content" role="main">
         <div class="content-wrapper">
           <AppBreadcrumb />
